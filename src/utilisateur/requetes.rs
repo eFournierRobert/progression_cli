@@ -1,4 +1,4 @@
-mod deserialize;
+use super::deserialize;
 
 use deserialize::{deserialize_token, Token};
 use serde_json::Error;
