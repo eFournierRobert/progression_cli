@@ -1,6 +1,10 @@
-use reqwest::blocking::{Client, Response};
+mod deserialize;
 
-pub fn get_token(credentials: String, username: String) {
+use deserialize::{deserialize_token, Token};
+use serde_json::Error;
+use reqwest::blocking::Client;
+
+pub fn get_token(credentials: String, username: String) -> Result<Token, Error> {
     let mut url = "https://progression.dti.crosemont.quebec/api/v1/user/".to_string();
     url.push_str(&username);
     url.push_str("/tokens");
@@ -22,8 +26,17 @@ pub fn get_token(credentials: String, username: String) {
 
     let http_client = Client::new();
     let http_result = http_client
-        .get(url)
+        .post(url)
+        .header("Content-Type", "application/json")
         .header("Authorization", "Basic ".to_owned() + &credentials)
-        .body(requête_body)
+        .body(requête_body.to_owned())
         .send();
+
+    if http_result.is_ok() {
+        return deserialize_token(
+            http_result.ok().unwrap().text().unwrap().as_str()
+        );
+    }else {
+        panic!("Error: JWT token request: {}", http_result.err().unwrap());
+    }
 }

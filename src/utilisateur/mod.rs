@@ -3,7 +3,7 @@ mod requetes;
 use base64;
 use requetes::get_token;
 
-pub fn préparation_token(username: String, mot_de_passe: String, domaine: String) {
+pub fn préparation_token(username: &str, mot_de_passe: &str, domaine: &str) {
     let mut credentials_préparé: String = username.to_owned();
     credentials_préparé.push_str(":");
     credentials_préparé.push_str(&mot_de_passe);
@@ -12,5 +12,11 @@ pub fn préparation_token(username: String, mot_de_passe: String, domaine: Strin
 
     let credentials_encodés = base64::encode(credentials_préparé);
 
-    get_token(credentials_encodés, username);
+    let token = get_token(credentials_encodés, String::from(username));
+
+    if token.is_ok() {
+        println!("{:#?}", token.ok().unwrap());
+    }else {
+        println!("Error: Unknown error {}", token.err().unwrap());
+    }
 }
