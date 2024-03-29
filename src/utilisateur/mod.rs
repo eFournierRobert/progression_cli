@@ -1,10 +1,27 @@
 mod requetes;
 mod deserialize;
 
+use std::io;
 use base64;
 use requetes::get_token;
 
-pub fn préparation_token(username: &str, mot_de_passe: &str, domaine: &str) {
+pub fn connexion() {
+    let mut username = String::new();
+    let mut mot_de_passe = String::new();
+    let mut domaine = String::new();
+
+    let stdin = io::stdin();
+
+    print!("Nom d'utilisateur: ");
+    stdin.read_line(&mut username);
+
+    print!("\nMot de passe: ");
+    stdin.read_line(&mut mot_de_passe);
+
+    print!("\nDomaine: ");
+    stdin.read_line(&mut domaine);
+
+
     let mut credentials_préparé: String = username.to_owned();
     credentials_préparé.push_str(":");
     credentials_préparé.push_str(&mot_de_passe);
