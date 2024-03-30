@@ -2,16 +2,19 @@ use serde::Deserialize;
 use serde_json::{from_str, Error};
 
 #[derive(Deserialize, Debug)]
+#[allow(dead_code)]
 pub struct Token {
     data: Data
 }
 
 #[derive(Deserialize, Debug)]
+#[allow(dead_code)]
 pub struct Data {
     attributes: Attributes,
 }
 
 #[derive(Deserialize, Debug)]
+#[allow(dead_code)]
 pub struct Attributes {
     username: String,
     création: i32,

@@ -37,6 +37,6 @@ pub fn get_token(credentials: String, username: String) -> Result<Token, Error> 
             http_result.ok().unwrap().text().unwrap().as_str()
         );
     }else {
-        panic!("Error: JWT token request: {}", http_result.err().unwrap());
+        panic!("Erreur: JWT token request: {}", http_result.err().unwrap());
     }
 }
