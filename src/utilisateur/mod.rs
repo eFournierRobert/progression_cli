@@ -8,7 +8,7 @@ use base64;
 use requetes::get_token;
 use rpassword::read_password;
 
-fn préparation_credentials(mut username: String, mut mot_de_passe: String) -> String {
+fn préparation_credentials(mut username: String, mot_de_passe: String) -> String {
     let len_username = username.len();
     
     username.truncate(len_username - 1);
