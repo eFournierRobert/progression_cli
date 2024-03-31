@@ -1,10 +1,9 @@
 use super::deserialize;
 
-use deserialize::{deserialize_token, Token};
-use serde_json::Error;
+use deserialize::deserialize_token;
 use reqwest::blocking::Client;
 
-pub fn get_token(credentials: String, username: String) -> Result<Token, Error> {
+pub fn get_token(credentials: String, username: String) -> String {
     let mut url = "https://progression.dti.crosemont.quebec/api/v1/user/".to_string();
     url.push_str(&username);
     url.push_str("/tokens");

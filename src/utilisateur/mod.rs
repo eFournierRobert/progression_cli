@@ -3,8 +3,7 @@ extern crate rpassword;
 mod requetes;
 mod deserialize;
 
-use std::io;
-use base64;
+use std::{fs, io};
 use requetes::get_token;
 use rpassword::read_password;
 
@@ -23,11 +22,13 @@ pub fn connexion() {
 
     let token = get_token(credentials_encodés, username.to_string());
 
-    if token.is_ok() {
-        println!("{:#?}", token.ok().unwrap());
-    }else {
-        println!("Erreur: Mauvais nom d'utilisateur ou mot de passe");
-    }
+    stocker_token(token.as_str());
+}
+
+pub fn déconnexion() {
+    _ = fs::write("./progressioncli/token", "");
+
+    println!("Déconnexion réussi");
 }
 
 fn préparation_credentials(mut username: String, mot_de_passe: String) -> String {
@@ -44,4 +45,24 @@ fn préparation_credentials(mut username: String, mot_de_passe: String) -> Strin
     let credentials_encodés = base64::encode(credentials_préparé);
 
     return credentials_encodés;
+}
+
+fn stocker_token(token: &str) {
+    let path = "./progressioncli";
+    let data_path = std::path::Path::new(path);
+
+    if !data_path.exists() {
+        let résultat_création = fs::create_dir(path);
+
+        if résultat_création.is_err() {
+            panic!(
+                "Erreur: Impossible d'enregistrer le token d'authentification\n{}",
+                résultat_création.err().unwrap()
+            );
+        }
+    }
+
+    let token_path = "./progressioncli/token";
+
+    _ = fs::write(token_path, token);
 }

@@ -27,14 +27,14 @@ fn main() {
                 vérifier_sous_commandes_utilisateurs(sous_commandes);
             }
         },
-        _ => {println!("womp womp");}
+        _ => {}
     }
 }
 
 fn vérifier_sous_commandes_utilisateurs(sous_commandes: &ArgMatches) {
     match sous_commandes.subcommand().unwrap().0 {
         "connexion" => utilisateur::connexion(),
-        "deconnexion" => println!("PAS IMPLÉMENTÉ"),
+        "deconnexion" => utilisateur::déconnexion(),
         _ => {}
     }
 }
