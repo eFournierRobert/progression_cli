@@ -1251,7 +1251,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "progression_cli"
+name = "progressioncli"
 version = "0.0.1"
 dependencies = [
  "base64 0.22.0",
