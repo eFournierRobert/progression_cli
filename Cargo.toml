@@ -1,8 +1,16 @@
 [package]
 name = "progression_cli"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64 = "0.22.0"
+cargo-modules = "0.15.2"
+clap = { version = "4.5.4", features = ["cargo"] }
+reqwest = { version = "0.12.2", features = ["blocking"] }
+rpassword = "7.3.1"
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.115"
+simple-home-dir = "0.3.2"
