@@ -3,9 +3,10 @@ extern crate rpassword;
 mod requetes;
 mod deserialize;
 
-use std::{fs, io};
+use std::{fs, io, path::PathBuf};
 use requetes::get_token;
 use rpassword::read_password;
+use simple_home_dir::home_dir;
 
 /// Ceci est une fonction publique qui récupère les identifiants de l'utilisateur et 
 /// qui fait les étapes nécessaires à la connexion à Progression.
@@ -41,7 +42,9 @@ pub fn connexion() {
 /// ## Retourne 
 /// Unit
 pub fn déconnexion() {
-    _ = fs::write("./progressioncli/token", "");
+    let path_token = get_fichier_token();
+
+    _ = fs::write(path_token, "");
 
     println!("Déconnexion réussi");
 }
@@ -103,11 +106,11 @@ fn préparation_credentials(mut username: String, mot_de_passe: String) -> Strin
 /// ## Retourne 
 /// Unit
 fn stocker_token(token: &str) {
-    let path = "./progressioncli";
-    let data_path = std::path::Path::new(path);
+    let path = get_dossier_progression();
+    let data_path = std::path::Path::new(path.as_os_str());
 
     if !data_path.exists() {
-        let résultat_création = fs::create_dir(path);
+        let résultat_création = fs::create_dir(&path);
 
         if résultat_création.is_err() {
             panic!(
@@ -117,7 +120,34 @@ fn stocker_token(token: &str) {
         }
     }
 
-    let token_path = "./progressioncli/token";
+    let path_token = get_fichier_token();
 
-    _ = fs::write(token_path, token);
+    _ = fs::write(path_token, token);
+}
+
+/// Ceci est une fonction qui permet de récupérer le dossier principale de progression_cli.
+/// 
+/// Le dossier est stocké dans : ~/.progressioncli
+/// 
+/// ## Retourne 
+/// Le path du dossier progressioncli.
+fn get_dossier_progression() -> PathBuf {
+    let mut path = home_dir().unwrap();
+    path.push(".progressioncli");
+
+    return path;
+}
+
+/// Ceci est une fonction qui permet de récupérer le fichier du token.
+/// 
+/// Le fichier est stocké dans : ~/.progressioncli/token
+/// 
+/// ## Retourne 
+/// Le path du fichier token.
+fn get_fichier_token() -> PathBuf{
+    let mut path = home_dir().unwrap();
+    path.push(".progressioncli");
+    path.push("token");
+
+    return path;
 }
