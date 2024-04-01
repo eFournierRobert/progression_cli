@@ -54,7 +54,7 @@ pub fn get_token(credentials: String, username: String) -> String {
         .post(url)
         .header("Content-Type", "application/json")
         .header("Authorization", "Basic ".to_owned() + &credentials)
-        .body(requête_body.to_owned())
+        .body(requête_body)
         .send();
 
     if http_result.is_ok() {

@@ -27,7 +27,10 @@ pub fn connexion() {
     println!("\nMot de passe: ");
     let mot_de_passe = read_password().unwrap();
 
-    let credentials_encodés = préparation_credentials(username.clone(), mot_de_passe);
+    let credentials_encodés = préparation_credentials(
+        &mut username,
+        mot_de_passe.as_str()
+    );
 
     let token = get_token(credentials_encodés, username.to_string());
 
@@ -74,7 +77,7 @@ pub fn déconnexion() {
 ///     credentials_encodé
 /// );
 /// ```
-fn préparation_credentials(mut username: String, mot_de_passe: String) -> String {
+fn préparation_credentials(username: &mut String, mot_de_passe: &str) -> String {
     let len_username = username.len();
     
     username.truncate(len_username - 1);
