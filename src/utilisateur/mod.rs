@@ -130,7 +130,7 @@ fn stocker_token(token: &str) {
 
 /// Ceci est une fonction qui permet de récupérer le dossier principale de progression_cli.
 /// 
-/// Le dossier est stocké dans : ~/.progressioncli
+/// Le dossier est stocké dans : ~/.config/progressioncli
 /// 
 /// ## Retourne 
 /// Le path du dossier progressioncli.
@@ -143,7 +143,7 @@ fn get_dossier_progression() -> PathBuf {
 
 /// Ceci est une fonction qui permet de récupérer le fichier du token.
 /// 
-/// Le fichier est stocké dans : ~/.progressioncli/token
+/// Le fichier est stocké dans : ~/.config/progressioncli/token
 /// 
 /// ## Retourne 
 /// Le path du fichier token.
