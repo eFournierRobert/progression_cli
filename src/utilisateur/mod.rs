@@ -136,7 +136,7 @@ fn stocker_token(token: &str) {
 /// Le path du dossier progressioncli.
 fn get_dossier_progression() -> PathBuf {
     let mut path = home_dir().unwrap();
-    path.push(".progressioncli");
+    path.push(".config/progressioncli");
 
     return path;
 }
@@ -149,7 +149,7 @@ fn get_dossier_progression() -> PathBuf {
 /// Le path du fichier token.
 fn get_fichier_token() -> PathBuf{
     let mut path = home_dir().unwrap();
-    path.push(".progressioncli");
+    path.push(".config/progressioncli");
     path.push("token");
 
     return path;
