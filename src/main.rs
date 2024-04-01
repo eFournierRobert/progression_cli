@@ -1,6 +1,6 @@
 mod utilisateur;
 
-use clap::{command, ArgMatches, Command};
+use clap::{command, Arg, ArgMatches, Command};
 
 fn main() {
     let match_result = command!()
@@ -17,6 +17,18 @@ fn main() {
             .about("Commandes pour gérer votre utilisateur")
             .arg_required_else_help(true)
     )
+    .subcommand(
+        Command::new("question")
+        .arg(
+            Arg::new("question_url")
+            .short('r')
+            .long("récupérer")
+            .help("Permet de récupérer une question avec l'url")
+            .aliases(["rec", "get"])
+        )
+        .about("Permet des actions par rapport aux questions")
+        .arg_required_else_help(true)
+    )
     .arg_required_else_help(true)
     .about("Progression CLI est un client en lignes de commande pour progression.dti.crosemont.quebec.")
     .version("0.0.1")
@@ -29,7 +41,18 @@ fn main() {
                 vérifier_sous_commandes_utilisateurs(sous_commandes);
             }
         },
+        Some(("question", sous_commandes)) => {
+            if sous_commandes.args_present() {
+                vérifier_sous_commandes_question(sous_commandes);
+            }
+        }
         _ => {}
+    }
+}
+
+fn vérifier_sous_commandes_question(sous_commandes: &ArgMatches) {
+    if sous_commandes.get_one::<String>("question_url") != None {
+        println!("NON IMPLÉMENTÉ");
     }
 }
 
