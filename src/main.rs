@@ -8,15 +8,17 @@ fn main() {
         Command::new("utilisateur")
             .subcommand(
                 Command::new("connexion")
+                .about("Permet de se connecter à Progression")
             )
             .subcommand(
                 Command::new("deconnexion")
+                .about("Permet de se déconnecter de Progression")
             )
             .about("Commandes pour gérer votre utilisateur")
             .arg_required_else_help(true)
     )
     .arg_required_else_help(true)
-    .about("Progression CLI est un client en lignes de commande pour Progression.")
+    .about("Progression CLI est un client en lignes de commande pour progression.dti.crosemont.quebec.")
     .version("0.0.1")
     .author("Elliott Fournier-Robert")
     .get_matches();
