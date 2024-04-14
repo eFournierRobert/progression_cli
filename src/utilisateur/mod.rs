@@ -128,6 +128,33 @@ fn stocker_token(token: &str) {
     _ = fs::write(path_token, token);
 }
 
+/// Ceci est une fonction qui permet de lire de token JWT et le nom d'utilisateur stocké dans le fichier.
+///
+/// ## Cas d'utilisation
+/// Pour lire le token JWT et le nom d'utilisateur. Permet de les avoirs en mémoire pour faire les requêtes.
+///
+/// ## Retourne
+/// Un String contenant le token.
+pub fn lire_token() -> String {
+    let path = get_fichier_token();
+    let lire_résultat = fs::read(path);
+
+    let convert_bytes_to_string = |mut a: String, v: &u8| {
+        let new_char = char::from(*v);
+        a.push(new_char);
+
+        return a;
+    };
+
+    return lire_résultat.ok()
+                        .unwrap()
+                        .iter()
+                        .fold(
+                            String::from(""),
+                            convert_bytes_to_string
+                        );
+}
+
 /// Ceci est une fonction qui permet de récupérer le dossier principale de progression_cli.
 /// 
 /// Le dossier est stocké dans : ~/.config/progressioncli
