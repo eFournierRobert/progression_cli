@@ -54,7 +54,8 @@ fn main() {
 fn vérifier_sous_commandes_question(sous_commandes: &ArgMatches) {
     if sous_commandes.get_one::<String>("question_url") != None {
         let token = question::récupérer_question(
-            utilisateur::lire_token().as_str()
+            utilisateur::lire_token().as_str(),
+            sous_commandes.get_one::<String>("question_url").unwrap()
         );
     }
 }
