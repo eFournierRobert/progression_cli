@@ -1,5 +1,5 @@
 use crate::request;
 
 pub fn clone(url: &String) {
-    request::get_question(url);
+    request::http_get_question(url);
 }
