@@ -16,6 +16,12 @@ fn main() {
                 .required(false)
         )
         .arg(
+            Arg::new("only-lang")
+                .long("only-lang")
+                .help("Clone only one language question")
+                .required(false)
+        )
+        .arg(
             Arg::new("clone")
                 .short('c')
                 .long("clone")
@@ -26,9 +32,10 @@ fn main() {
         .get_matches();
 
     let debugging = matches.get_one::<bool>("debugging").unwrap();
+    let only_lang = matches.get_one::<String>("only-lang");
 
     match matches.get_one::<String>("clone") {
-        Some(url) => question::clone(url, debugging),
+        Some(url) => question::clone(url, debugging, only_lang),
         _ => {}
     }
 }

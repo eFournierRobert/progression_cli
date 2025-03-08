@@ -22,6 +22,7 @@ pub struct Attributes {
     pub niveau: Option<String>,
     pub titre: Option<String>,
     pub énoncé: Option<String>,
+    pub licence: Option<String>,
     pub code: Option<String>,
     pub langage: Option<String>
 }

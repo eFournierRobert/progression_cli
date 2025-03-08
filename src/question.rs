@@ -1,13 +1,14 @@
-use std::{fs::File, io::Write, process::exit};
-use crate::{request::{self, RequestError}, structs::question:: Question};
+use std::{env, fs::{self, File}, io::Write, process::exit};
+use crate::{request::{self, RequestError}, structs::question::{Attributes,  Question}};
 
 enum FileCreationError {
     FailedCreateDot,
     FailedCreateEnonce,
-    FailedCreateQuestion
+    FailedCreateQuestion,
+    FailedCreateFolder
 }
 
-pub fn clone(url: &String, debugging: &bool) {
+pub fn clone(url: &String, debugging: &bool, only_lang: Option<&String>) {
     let question_uri = get_question_uri_from_url(url);
 
     if question_uri.is_some() {
@@ -19,7 +20,7 @@ pub fn clone(url: &String, debugging: &bool) {
             }
         };
 
-        match create_files(question) {
+        match create_files(question, only_lang) {
             Ok(_) => (),
             Err(e) => file_creation_error_messages(e),
         }
@@ -28,7 +29,19 @@ pub fn clone(url: &String, debugging: &bool) {
     }
 }
 
-fn create_files(question: Question) -> Result<(), FileCreationError> {
+fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), FileCreationError> {
+    println!("Creating folder...");
+
+    let titre_question = question.data.attributes.clone().unwrap().titre.unwrap();
+
+    match fs::create_dir(&titre_question) {
+        Ok(_) => { 
+            println!("Folder created");
+            let _ = env::set_current_dir(titre_question);
+        },
+        Err(_) => return Err(FileCreationError::FailedCreateFolder)
+    }
+    
     println!("Creating files...");
 
     let prog_cli = File::create(".progcli");
@@ -53,11 +66,13 @@ fn create_files(question: Question) -> Result<(), FileCreationError> {
         };
 
         match write!(
-            file, "# {}\n***Niveau: {}***\n{}\n{}",
+            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n{}\n\n**Licence: {}**",
             question_attributes.titre.unwrap(),
             question_attributes.niveau.unwrap_or("Inconnue".to_string()),
-            question_attributes.description.unwrap(),
-            question_attributes.énoncé.unwrap_or("Aucun énoncé".to_string())
+            question_attributes.auteur.unwrap_or("Auteur inconnu".to_string()),
+            question_attributes.description.unwrap_or("Aucune description".to_string()),
+            question_attributes.énoncé.unwrap_or("Aucun énoncé".to_string()),
+            question_attributes.licence.unwrap_or("Aucune licence".to_string())
         ) {
             Ok(_) => println!("enonce.md file created"),
             Err(_) => return Err(FileCreationError::FailedCreateEnonce)
@@ -66,8 +81,33 @@ fn create_files(question: Question) -> Result<(), FileCreationError> {
         return Err(FileCreationError::FailedCreateEnonce);
     }
 
-    let question_code = question.included[0].attributes.clone();
+    for included_code in question.included.iter() {
+        let question_code = included_code.attributes.clone();
 
+        match only_lang {
+            Some(lan) => {
+                if *lan == question_code.langage.clone().unwrap() {
+                    match create_question_file(question_code) {
+                        Ok(_) => println!("Question file created"),
+                        Err(e) => return Err(e)
+                    }
+                    break;
+                }
+            },
+            None => {
+                match create_question_file(question_code) {
+                    Ok(_) => println!("Question file created"),
+                    Err(e) => return Err(e)
+                }
+            }
+        }
+    }
+
+    println!("File creation done!");
+    Ok(())
+}
+
+fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError>{
     let question_file = match question_code.langage.unwrap().as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
@@ -82,21 +122,18 @@ fn create_files(question: Question) -> Result<(), FileCreationError> {
         let mut file = question_file.unwrap();
         
         match write!(file, "{}", question_code.code.unwrap()) {
-            Ok(_) => println!("Question file created"),
+            Ok(_) => Ok(()),
             Err(_) => return Err(FileCreationError::FailedCreateQuestion)
         }
     } else {
         return Err(FileCreationError::FailedCreateQuestion);
     }
-
-    println!("File creation done!");
-    Ok(())
 }
 
 fn get_question_uri_from_url(url: &String) -> Option<&str> {
     if url.contains("question?uri=") && url.contains("progression.crosemont.qc.ca") {
         let i = url.find("uri=").unwrap();
-        Some(url.get((i + 4)..(i + 144)).unwrap())
+        Some(url.get((i + 4)..url.len()).unwrap())
     } else {
         None
     }
@@ -114,6 +151,10 @@ fn file_creation_error_messages(e: FileCreationError) {
         },
         FileCreationError::FailedCreateQuestion => {
             println!("Failed to create question file.");
+            return
+        },
+        FileCreationError::FailedCreateFolder => {
+            println!("Failed to create folder for files.");
             return
         }
     }
