@@ -1,4 +1,6 @@
-use crate::request;
+use std::process::exit;
+
+use crate::request::{self, RequestError};
 
 pub fn clone(url: &String) {
     let question_uri = get_question_uri_from_url(url);
@@ -7,8 +9,8 @@ pub fn clone(url: &String) {
         let question = match request::http_get_question(question_uri.unwrap()) {
             Ok(question) => question,
             Err(e) => { 
-                println!("Couldn't clone question: {:?}", e);
-                return
+                request_error_messages(e);
+                exit(1)   
             }
         };
 
@@ -24,5 +26,22 @@ fn get_question_uri_from_url(url: &String) -> Option<&str> {
         Some(url.get((i + 4)..(i + 144)).unwrap())
     } else {
         None
+    }
+}
+
+fn request_error_messages(e: RequestError) {
+    match e {
+        RequestError::AuthCreationFail => { 
+            println!("Failed to create basic auth.");
+            return
+        },
+        RequestError::QuestionDeserializeFail => {
+            println!("Failed to deserialize API response.");
+            return
+        },
+        RequestError::QuestionRequestFail => {
+            println!("Failed to make HTTP request for question.");
+            return;
+        }
     }
 }
