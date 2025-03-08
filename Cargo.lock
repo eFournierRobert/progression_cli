@@ -819,6 +819,8 @@ dependencies = [
  "clap",
  "reqwest",
  "rpassword",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

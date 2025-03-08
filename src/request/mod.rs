@@ -1,26 +1,39 @@
+mod deserialize;
+
 use std::{collections::HashMap, io};
 use reqwest::blocking::Client;
+use deserialize::Question;
 
-pub fn http_get_question(url: &String) {
-    let auth = match get_username_password() {
-        Ok(auth_hasmap) => auth_hasmap,
-        Err(e) => {
-            println!("Error creating auth: {e}");
-            return
-        }
-    };
+#[derive(Debug)]
+pub enum RequestError {
+    AuthCreationFail,
+    QuestionRequestFail,
+    QuestionDeserializeFail
+}
+
+pub fn http_get_question(url: &String) -> Result<Question, RequestError>{
+    let auth_result = get_username_password();
+    let mut _auth = HashMap::new();
+
+    if auth_result.is_ok() {
+        _auth = auth_result.unwrap();
+    } else {
+        return Err(RequestError::AuthCreationFail);
+    }
 
     let api_url = get_api_url();
 
-    let username = auth.get("username").unwrap();
-    let password = auth.get("password");
+    let username = _auth.get("username").unwrap();
+    let password = _auth.get("password");
+
+    println!("Fetching question...");
 
     let client = Client::new();
     let result = client.get(
         api_url + 
         "question/" + 
         url +
-        "?include=questions"
+        "?include=questions,ebauches"
     )
             .basic_auth(
                 username,
@@ -28,7 +41,14 @@ pub fn http_get_question(url: &String) {
             )
             .send();
 
-    println!("{:?}", result);
+    if result.is_err() {
+        return Err(RequestError::QuestionRequestFail);
+    } else {
+        match deserialize::deserialize_question(result.unwrap().text().unwrap()) {
+            Ok(question) => Ok(question),
+            Err(_) => Err(RequestError::QuestionDeserializeFail)
+        }
+    }
 }
 
 fn get_api_url() -> String {
@@ -51,7 +71,6 @@ fn get_username_password() -> Result<HashMap<String, String>, io::Error>{
     let mut hashmap = HashMap::new();
     hashmap.insert(String::from("username"), username.clone());
     hashmap.insert(String::from("password"), password);
-
 
     Ok(hashmap)
 }
