@@ -1,4 +1,5 @@
 pub mod request;
+pub mod structs;
 mod question;
 
 use clap::{command, Arg};
