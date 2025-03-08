@@ -11,7 +11,7 @@ pub enum RequestError {
     QuestionDeserializeFail
 }
 
-pub fn http_get_question(url: &String) -> Result<Question, RequestError>{
+pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
     let auth_result = get_username_password();
     let mut _auth = HashMap::new();
 
@@ -32,7 +32,7 @@ pub fn http_get_question(url: &String) -> Result<Question, RequestError>{
     let result = client.get(
         api_url + 
         "question/" + 
-        url +
+        question_uri +
         "?include=questions,ebauches"
     )
             .basic_auth(
