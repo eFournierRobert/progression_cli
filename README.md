@@ -12,7 +12,7 @@ Progression CLI is a Rust client for the [Progression](https://progression.crose
 
 The client is made to offer a way to "clone" the questions locally and be able to use the basic functionalities the app offers.
 
-## Fonctionnalités plannifiées / Planned functionalities
+## Fonctionnalités planifiées / Planned functionalities
 - [x] Basic auth with base64
 - [x] Question cloning
 - [ ] Submit answers
