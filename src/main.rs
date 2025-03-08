@@ -12,7 +12,7 @@ fn main() {
             Arg::new("clone")
                 .short('c')
                 .long("clone")
-                .help("Clone the given question")
+                .help("Clone the given question with its URL")
                 .required(false)
         )
         .arg_required_else_help(true)
