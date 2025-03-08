@@ -1,33 +1,33 @@
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Question {
     pub data: Data,
-    included: Option<Vec<Included>>
+    pub included: Vec<Included>
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Data {
-    id: Option<String>,
-    attributes: Option<Attributes>
+    pub id: Option<String>,
+    pub attributes: Option<Attributes>
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Attributes {
-    auteur: Option<String>,
-    description: Option<String>,
-    niveau: Option<String>,
-    titre: Option<String>,
+    pub auteur: Option<String>,
+    pub description: Option<String>,
+    pub niveau: Option<String>,
+    pub titre: Option<String>,
     énoncé: Option<String>,
-    code: Option<String>,
-    langage: Option<String>
+    pub code: Option<String>,
+    pub langage: Option<String>
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
-struct Included {
-    attributes: Option<Attributes>
+pub struct Included {
+    pub attributes: Attributes
 }
