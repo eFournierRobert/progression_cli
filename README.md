@@ -17,3 +17,19 @@ The client is made to offer a way to "clone" the questions locally and be able t
 - [x] Question cloning
 - [ ] Submit answers
 - [ ] Submit tests
+
+## Build and run from source
+Build the package:
+```bash 
+cargo build
+```
+
+Build and run the package:
+```bash 
+cargo run -- [your arguments]
+```
+
+Build a release of the package:
+```bash
+cargo build --release
+```
