@@ -11,6 +11,13 @@ pub enum RequestError {
     QuestionDeserializeFail
 }
 
+/// Function getting the question from the API.
+/// 
+/// This function takes the question URI and makes a GET request to the API. If successful,
+/// it will return a ```struct``` ```Question``` inside the ```Result```. If not, it will return
+/// a ```RequestError```.
+/// 
+/// ```debugging``` makes some debugging print during execution if true.
 pub fn http_get_question(question_uri: &str, debugging: &bool) -> Result<Question, RequestError>{
     let auth_result = get_username_password();
     let mut _auth = HashMap::new();
@@ -73,10 +80,17 @@ pub fn http_get_question(question_uri: &str, debugging: &bool) -> Result<Questio
     }
 }
 
+/// A simple getter for the API URL as a String.
+/// 
+/// Will return a ```String``` ""https://progression.crosemont.qc.ca/api/v1//"".
 fn get_api_url() -> String {
     String::from("https://progression.crosemont.qc.ca/api/v1//")
 }
 
+/// Ask the user for his username and password.
+/// 
+/// This function will prompt the user for his username and password.
+/// Then stores it inside an ```Hashmap``` and the ```Hashmap``` inside an ```Result```.
 fn get_username_password() -> Result<HashMap<String, String>, io::Error>{
     let mut username = String::new();
 
