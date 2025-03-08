@@ -11,13 +11,16 @@ pub enum RequestError {
     QuestionDeserializeFail
 }
 
-pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
+pub fn http_get_question(question_uri: &str, debugging: &bool) -> Result<Question, RequestError>{
     let auth_result = get_username_password();
     let mut _auth = HashMap::new();
 
     if auth_result.is_ok() {
         _auth = auth_result.unwrap();
     } else {
+        if *debugging {
+            println!("{:?}", auth_result.err());
+        }
         return Err(RequestError::AuthCreationFail);
     }
 
@@ -42,11 +45,22 @@ pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
             .send();
 
     if result.is_err() {
+        if *debugging {
+            println!("{:?}", result.err());
+        }
         return Err(RequestError::QuestionRequestFail);
     } else {
-        match deserialize::deserialize_question(result.unwrap().text().unwrap()) {
-            Ok(question) => Ok(question),
-            Err(_) => Err(RequestError::QuestionDeserializeFail)
+        match deserialize::deserialize_question(result.unwrap().text().unwrap(), debugging) {
+            Ok(question) => {
+                println!("Fetching done!");
+                Ok(question)
+            },
+            Err(e) => {
+                if *debugging {
+                    println!("{:?}", e);
+                }
+                Err(RequestError::QuestionDeserializeFail)
+            }
         }
     }
 }

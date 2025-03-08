@@ -10,7 +10,7 @@ pub struct Question {
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Data {
-    pub id: Option<String>,
+    pub id: String,
     pub attributes: Option<Attributes>
 }
 
@@ -21,7 +21,7 @@ pub struct Attributes {
     pub description: Option<String>,
     pub niveau: Option<String>,
     pub titre: Option<String>,
-    énoncé: Option<String>,
+    pub énoncé: Option<String>,
     pub code: Option<String>,
     pub langage: Option<String>
 }

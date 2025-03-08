@@ -2,12 +2,19 @@ pub mod request;
 pub mod structs;
 mod question;
 
-use clap::{command, Arg};
+use clap::{command, Arg, ArgAction};
 
 fn main() {
     let matches = command!()
         .about("Progression CLI")
         .author("Elliott Fournier-Robert")
+        .arg(
+            Arg::new("debugging")
+                .action(ArgAction::SetTrue)
+                .long("debug")
+                .help("Print to STDOUT the full errors")
+                .required(false)
+        )
         .arg(
             Arg::new("clone")
                 .short('c')
@@ -18,8 +25,10 @@ fn main() {
         .arg_required_else_help(true)
         .get_matches();
 
+    let debugging = matches.get_one::<bool>("debugging").unwrap();
+
     match matches.get_one::<String>("clone") {
-        Some(url) => question::clone(url),
+        Some(url) => question::clone(url, debugging),
         _ => {}
     }
 }
