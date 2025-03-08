@@ -8,6 +8,12 @@ enum FileCreationError {
     FailedCreateFolder
 }
 
+/// Function to clone the question in a folder given the URL.
+/// 
+/// This function will do the request to the Progression API to get question, then it creates the files
+/// inside a folder named after the question title.
+/// 
+/// It will manage the errors along the way and print the error messages.
 pub fn clone(url: &String, debugging: &bool, only_lang: Option<&String>) {
     let question_uri = get_question_uri_from_url(url);
 
@@ -29,6 +35,12 @@ pub fn clone(url: &String, debugging: &bool, only_lang: Option<&String>) {
     }
 }
 
+/// Function to create the folder and the necessary files for a question.
+/// 
+/// This function will create the necessary files inside a folder named after the question title. If given ```Some()``` to ```only-lang```
+/// it will create a question file only for the given language.
+/// 
+/// It returns a ```Result``` with either Unit or an error from the ```FileCreationError``` enum.
 fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), FileCreationError> {
     println!("Creating folder...");
 
@@ -107,6 +119,11 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     Ok(())
 }
 
+/// Function to create a question file.
+/// 
+/// Since we need to create one or multiple question file under different scenario, this function
+/// manages the creation of a single file. It will create a file for the given language inside 
+/// ```question_code``` and fill it with the given code.
 fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError>{
     let question_file = match question_code.langage.unwrap().as_str() {
         "python" => File::create("question.py"),
@@ -130,6 +147,9 @@ fn create_question_file(question_code: Attributes) -> Result<(), FileCreationErr
     }
 }
 
+/// Get the question URI from the URL.
+/// 
+/// This function will extract the question URI from a given URL.
 fn get_question_uri_from_url(url: &String) -> Option<&str> {
     if url.contains("question?uri=") && url.contains("progression.crosemont.qc.ca") {
         let i = url.find("uri=").unwrap();
@@ -139,6 +159,10 @@ fn get_question_uri_from_url(url: &String) -> Option<&str> {
     }
 }
 
+/// Print an error message for the given error.
+/// 
+/// This function prints an error message for the given error inside the 
+/// ```enum``` ```FileCreationError```.
 fn file_creation_error_messages(e: FileCreationError) {
     match e {
         FileCreationError::FailedCreateDot => {
@@ -160,6 +184,10 @@ fn file_creation_error_messages(e: FileCreationError) {
     }
 }
 
+/// Print an error message for the given error.
+/// 
+/// This function prints an error message for the given error inside the 
+/// ```enum``` ```RequestError```.
 fn request_error_messages(e: RequestError) {
     match e {
         RequestError::AuthCreationFail => { 
