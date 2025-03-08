@@ -50,18 +50,26 @@ pub fn http_get_question(question_uri: &str, debugging: &bool) -> Result<Questio
         }
         return Err(RequestError::QuestionRequestFail);
     } else {
-        match deserialize::deserialize_question(result.unwrap().text().unwrap(), debugging) {
-            Ok(question) => {
-                println!("Fetching done!");
-                Ok(question)
-            },
-            Err(e) => {
-                if *debugging {
-                    println!("{:?}", e);
+        let result = result.unwrap();
+
+        if result.status() == 200 {
+            match deserialize::deserialize_question(result.text().unwrap(), debugging) {
+                Ok(question) => {
+                    println!("Fetching done!");
+                    Ok(question)
+                },
+                Err(e) => {
+                    if *debugging {
+                        println!("{:?}", e);
+                    }
+                    Err(RequestError::QuestionDeserializeFail)
                 }
-                Err(RequestError::QuestionDeserializeFail)
             }
+        } else {
+            println!("{}", result.text().unwrap());
+            Err(RequestError::QuestionDeserializeFail)
         }
+        
     }
 }
 
