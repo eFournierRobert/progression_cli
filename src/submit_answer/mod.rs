@@ -11,12 +11,18 @@ pub enum SubmitError {
     CoultNotReadDirectory,
 }
 
+/// Submit an answer and print the response inside ```answer.md```.
+/// 
+/// This function is the main function that manages submitting and answer
+/// and printing the result inside the file ```answer.md```.
+/// 
+/// In case of errors, it prints the error messages and exit the program.
 pub fn submit_answer() {
     let uri = read_uri_from_dotfile();
     let file = match get_question_file_name() {
         Ok(file_info) => file_info,
         Err(e) => {
-            print_error_message(e);
+            print_submit_error_message(e);
             exit(-1);
         }
     };
@@ -39,6 +45,12 @@ pub fn submit_answer() {
     }
 }
 
+/// Create the ```answer.md``` file with the response of the server.
+/// 
+/// This function manages the creation of the ```answer.md``` as well as writing 
+/// the response inside of it.
+/// 
+/// In case of errors, it will return an error from the ```FileCreationError``` enum.
 fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreationError>{
     let answer = fs::exists("answer.md").unwrap();
 
@@ -83,6 +95,12 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
     }
 }
 
+/// Gets the filename and type of the question file.
+/// 
+/// This function gets the name of the file and its file extension,
+/// then puts it inside a HashMap. Keys are ```filename``` and ```filetype```.
+/// 
+/// In case of errors, it will return an error from the ```SubmitError``` enum.
 fn get_question_file_name() -> Result<HashMap<String, String>, SubmitError>{
     let paths = fs::read_dir("./").unwrap();
 
@@ -116,7 +134,11 @@ fn get_question_file_name() -> Result<HashMap<String, String>, SubmitError>{
     Err(SubmitError::QuestionFileNotFound)
 }
 
-fn print_error_message(e: SubmitError) {
+/// Prints an error message for a ```SubmitError```.
+/// 
+/// This function prints an error message depending on 
+/// the type of the ```SubmitError```.
+fn print_submit_error_message(e: SubmitError) {
     match e {
         SubmitError::QuestionFileNotFound => {
             println!("Could not find Question file");
