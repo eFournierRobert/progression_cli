@@ -2,7 +2,7 @@ use reqwest::blocking::Client;
 
 use crate::{structs::{submit::{Attributes, Data, SubmitBody}, submit_response::SubmitResponse}, utils::{get_api_url, get_username_password, RequestError}};
 
-use super::{deserialize::deserialize_answer, serialize::serialize_body, SubmitError};
+use super::{deserialize::deserialize_answer, serialize::serialize_body};
 
 pub fn post_answers(uri: String, code: String) -> Result<SubmitResponse, RequestError>{
     let auth = match get_username_password() {

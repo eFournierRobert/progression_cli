@@ -4,7 +4,7 @@ mod deserialize;
 
 use std::{fs, process::exit};
 
-use crate::{structs::submit_response, utils::{read_code_from_file, read_uri_from_dotfile, request_error_messages}};
+use crate::utils::{read_code_from_file, read_uri_from_dotfile, request_error_messages};
 use request::post_answers;
 
 pub enum SubmitError {
