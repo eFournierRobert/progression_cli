@@ -1,12 +1,9 @@
-use std::{env, fs::{self, File}, io::Write, process::exit};
-use crate::{request::{self, RequestError}, structs::question::{Attributes,  Question}};
+mod request;
+mod deserialize;
 
-enum FileCreationError {
-    FailedCreateDot,
-    FailedCreateEnonce,
-    FailedCreateQuestion,
-    FailedCreateFolder
-}
+use std::{env, fs::{self, File}, io::Write, process::exit};
+use crate::{structs::question::{Attributes,  Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
+
 
 /// Function to clone the question in a folder given the URL.
 /// 
@@ -14,11 +11,11 @@ enum FileCreationError {
 /// inside a folder named after the question title.
 /// 
 /// It will manage the errors along the way and print the error messages.
-pub fn clone(url: &String, debugging: &bool, only_lang: Option<&String>) {
+pub fn clone(url: &String, only_lang: Option<&String>) {
     let question_uri = get_question_uri_from_url(url);
 
     if question_uri.is_some() {
-        let question = match request::http_get_question(question_uri.unwrap(), debugging) {
+        let question = match request::http_get_question(question_uri.unwrap()) {
             Ok(question) => question,
             Err(e) => { 
                 request_error_messages(e);
@@ -78,7 +75,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         };
 
         match write!(
-            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n{}\n\n**Licence: {}**",
+            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n\n{}\n\n**Licence: {}**",
             question_attributes.titre.unwrap(),
             question_attributes.niveau.unwrap_or("Inconnue".to_string()),
             question_attributes.auteur.unwrap_or("Auteur inconnu".to_string()),
@@ -156,51 +153,5 @@ fn get_question_uri_from_url(url: &String) -> Option<&str> {
         Some(url.get((i + 4)..url.len()).unwrap())
     } else {
         None
-    }
-}
-
-/// Print an error message for the given error.
-/// 
-/// This function prints an error message for the given error inside the 
-/// ```enum``` ```FileCreationError```.
-fn file_creation_error_messages(e: FileCreationError) {
-    match e {
-        FileCreationError::FailedCreateDot => {
-            println!("Failed to create .progcli.");
-            return
-        },
-        FileCreationError::FailedCreateEnonce => {
-            println!("Failed to create enonce.md file.");
-            return
-        },
-        FileCreationError::FailedCreateQuestion => {
-            println!("Failed to create question file.");
-            return
-        },
-        FileCreationError::FailedCreateFolder => {
-            println!("Failed to create folder for files.");
-            return
-        }
-    }
-}
-
-/// Print an error message for the given error.
-/// 
-/// This function prints an error message for the given error inside the 
-/// ```enum``` ```RequestError```.
-fn request_error_messages(e: RequestError) {
-    match e {
-        RequestError::AuthCreationFail => { 
-            println!("Failed to create basic auth.");
-            return
-        },
-        RequestError::QuestionDeserializeFail => {
-            println!("Failed to deserialize API response.");
-            return
-        },
-        RequestError::QuestionRequestFail => {
-            println!("Failed to make HTTP request for question.");
-            return;
-        }
     }
 }

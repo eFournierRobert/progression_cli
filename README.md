@@ -15,7 +15,7 @@ The client is made to offer a way to "clone" the questions locally and be able t
 ## Fonctionnalités planifiées / Planned functionalities
 - [x] Basic auth with base64
 - [x] Question cloning
-- [ ] Submit answers
+- [x] Submit answers
 - [ ] Submit tests
 
 ## Build and run from source
