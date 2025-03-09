@@ -11,11 +11,11 @@ use crate::{structs::question::{Attributes,  Question}, utils::{file_creation_er
 /// inside a folder named after the question title.
 /// 
 /// It will manage the errors along the way and print the error messages.
-pub fn clone(url: &String, debugging: &bool, only_lang: Option<&String>) {
+pub fn clone(url: &String, only_lang: Option<&String>) {
     let question_uri = get_question_uri_from_url(url);
 
     if question_uri.is_some() {
-        let question = match request::http_get_question(question_uri.unwrap(), debugging) {
+        let question = match request::http_get_question(question_uri.unwrap()) {
             Ok(question) => question,
             Err(e) => { 
                 request_error_messages(e);

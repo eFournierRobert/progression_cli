@@ -11,13 +11,6 @@ fn main() {
         .about("Progression CLI")
         .author("Elliott Fournier-Robert")
         .arg(
-            Arg::new("debugging")
-                .action(ArgAction::SetTrue)
-                .long("debug")
-                .help("Print to STDOUT the full errors")
-                .required(false)
-        )
-        .arg(
             Arg::new("only-lang")
                 .long("only-lang")
                 .help("Clone only one language question")
@@ -41,13 +34,11 @@ fn main() {
         .arg_required_else_help(true)
         .get_matches();
 
-    let debugging = matches.get_one::<bool>("debugging").unwrap();
     let only_lang = matches.get_one::<String>("only-lang");
-
     let submit = matches.get_one::<bool>("submit").unwrap();
 
     match matches.get_one::<String>("clone") {
-        Some(url) => question::clone(url, debugging, only_lang),
+        Some(url) => question::clone(url, only_lang),
         _ => {}
     }
 
