@@ -1,4 +1,5 @@
 pub mod structs;
+pub mod utils;
 mod question;
 mod submit_answer;
 

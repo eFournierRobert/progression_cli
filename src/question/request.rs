@@ -1,13 +1,6 @@
-use std::{collections::HashMap, io};
+use std::collections::HashMap;
 use reqwest::blocking::Client;
-use crate::{question::deserialize, structs::question::Question};
-
-#[derive(Debug)]
-pub enum RequestError {
-    AuthCreationFail,
-    QuestionRequestFail,
-    QuestionDeserializeFail
-}
+use crate::{question::deserialize, structs::question::Question, utils::{get_api_url, get_username_password, RequestError}};
 
 /// Function getting the question from the API.
 /// 
@@ -76,35 +69,4 @@ pub fn http_get_question(question_uri: &str, debugging: &bool) -> Result<Questio
         }
         
     }
-}
-
-/// A simple getter for the API URL as a String.
-/// 
-/// Will return a ```String``` ""https://progression.crosemont.qc.ca/api/v1//"".
-fn get_api_url() -> String {
-    String::from("https://progression.crosemont.qc.ca/api/v1//")
-}
-
-/// Ask the user for his username and password.
-/// 
-/// This function will prompt the user for his username and password.
-/// Then stores it inside an ```Hashmap``` and the ```Hashmap``` inside an ```Result```.
-fn get_username_password() -> Result<HashMap<String, String>, io::Error>{
-    let mut username = String::new();
-
-    println!("Username: ");
-    io::stdin().read_line(&mut username).expect("Failed to read username");
-    username.pop(); // Remove newline character
-
-    println!("Password: ");
-    let password =  match rpassword::read_password(){
-        Ok(pass) => pass,
-        Err(e) => return Err(e)
-    };
-
-    let mut hashmap = HashMap::new();
-    hashmap.insert(String::from("username"), username.clone());
-    hashmap.insert(String::from("password"), password);
-
-    Ok(hashmap)
 }

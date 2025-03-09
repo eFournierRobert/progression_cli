@@ -2,7 +2,7 @@ mod request;
 mod deserialize;
 
 use std::{env, fs::{self, File}, io::Write, process::exit};
-use {request::RequestError, crate::structs::question::{Attributes,  Question}};
+use crate::{structs::question::{Attributes,  Question}, utils::RequestError};
 
 enum FileCreationError {
     FailedCreateDot,
