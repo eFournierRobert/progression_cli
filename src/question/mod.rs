@@ -2,14 +2,8 @@ mod request;
 mod deserialize;
 
 use std::{env, fs::{self, File}, io::Write, process::exit};
-use crate::{structs::question::{Attributes,  Question}, utils::request_error_messages};
+use crate::{structs::question::{Attributes,  Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
 
-enum FileCreationError {
-    FailedCreateDot,
-    FailedCreateEnonce,
-    FailedCreateQuestion,
-    FailedCreateFolder
-}
 
 /// Function to clone the question in a folder given the URL.
 /// 
@@ -159,30 +153,5 @@ fn get_question_uri_from_url(url: &String) -> Option<&str> {
         Some(url.get((i + 4)..url.len()).unwrap())
     } else {
         None
-    }
-}
-
-/// Print an error message for the given error.
-/// 
-/// This function prints an error message for the given error inside the 
-/// ```enum``` ```FileCreationError```.
-fn file_creation_error_messages(e: FileCreationError) {
-    match e {
-        FileCreationError::FailedCreateDot => {
-            println!("Failed to create .progcli.");
-            return
-        },
-        FileCreationError::FailedCreateEnonce => {
-            println!("Failed to create enonce.md file.");
-            return
-        },
-        FileCreationError::FailedCreateQuestion => {
-            println!("Failed to create question file.");
-            return
-        },
-        FileCreationError::FailedCreateFolder => {
-            println!("Failed to create folder for files.");
-            return
-        }
     }
 }

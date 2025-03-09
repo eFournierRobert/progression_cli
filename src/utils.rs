@@ -10,6 +10,15 @@ pub enum RequestError {
     SubmitDeserializeFail
 }
 
+pub enum FileCreationError {
+    FailedCreateDot,
+    FailedCreateEnonce,
+    FailedCreateQuestion,
+    FailedCreateFolder,
+    FailedCreateAnswer
+}
+
+
 pub fn read_uri_from_dotfile() -> String {
     fs::read_to_string(".progcli").expect(".progcli not found")
 }
@@ -78,6 +87,36 @@ pub fn request_error_messages(e: RequestError) {
         RequestError::SubmitDeserializeFail => {
             println!("Failed to deserialize response from submit answer.");
             return;
+        }
+    }
+}
+
+
+/// Print an error message for the given error.
+/// 
+/// This function prints an error message for the given error inside the 
+/// ```enum``` ```FileCreationError```.
+pub fn file_creation_error_messages(e: FileCreationError) {
+    match e {
+        FileCreationError::FailedCreateDot => {
+            println!("Failed to create .progcli.");
+            return
+        },
+        FileCreationError::FailedCreateEnonce => {
+            println!("Failed to create enonce.md file.");
+            return
+        },
+        FileCreationError::FailedCreateQuestion => {
+            println!("Failed to create question file.");
+            return
+        },
+        FileCreationError::FailedCreateFolder => {
+            println!("Failed to create folder for files.");
+            return
+        },
+        FileCreationError::FailedCreateAnswer => {
+            println!("Failed to create answer.md file.");
+            return
         }
     }
 }
