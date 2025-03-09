@@ -2,7 +2,7 @@ mod request;
 mod deserialize;
 
 use std::{env, fs::{self, File}, io::Write, process::exit};
-use crate::{structs::question::{Attributes,  Question}, utils::RequestError};
+use crate::{structs::question::{Attributes,  Question}, utils::request_error_messages};
 
 enum FileCreationError {
     FailedCreateDot,
@@ -183,27 +183,6 @@ fn file_creation_error_messages(e: FileCreationError) {
         FileCreationError::FailedCreateFolder => {
             println!("Failed to create folder for files.");
             return
-        }
-    }
-}
-
-/// Print an error message for the given error.
-/// 
-/// This function prints an error message for the given error inside the 
-/// ```enum``` ```RequestError```.
-fn request_error_messages(e: RequestError) {
-    match e {
-        RequestError::AuthCreationFail => { 
-            println!("Failed to create basic auth.");
-            return
-        },
-        RequestError::QuestionDeserializeFail => {
-            println!("Failed to deserialize API response.");
-            return
-        },
-        RequestError::QuestionRequestFail => {
-            println!("Failed to make HTTP request for question.");
-            return;
         }
     }
 }

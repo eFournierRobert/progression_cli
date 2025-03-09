@@ -1,8 +1,10 @@
 mod request;
+mod serialize;
 
-use std::{fs, ops::Sub, process::exit};
+use std::{fs, process::exit};
 
 use crate::utils::{read_code_from_file, read_uri_from_dotfile};
+use request::post_answers;
 
 pub enum SubmitError {
     QuestionFileNotFound,
@@ -20,7 +22,7 @@ pub fn submit_answer() {
     };
     let code = read_code_from_file(file_name);
 
-    println!("URI: {}\ncode: {}", uri, code);
+    post_answers(uri, code);
 }
 
 fn get_question_file_name() -> Result<String, SubmitError>{

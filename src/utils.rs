@@ -4,7 +4,9 @@ use std::{collections::HashMap, fs, io};
 pub enum RequestError {
     AuthCreationFail,
     QuestionRequestFail,
-    QuestionDeserializeFail
+    QuestionDeserializeFail,
+    SubmitSerializeFail,
+    SubmitRequestFail
 }
 
 pub fn read_uri_from_dotfile() -> String {
@@ -44,4 +46,33 @@ pub fn get_username_password() -> Result<HashMap<String, String>, io::Error>{
     hashmap.insert(String::from("password"), password);
 
     Ok(hashmap)
+}
+
+/// Print an error message for the given error.
+/// 
+/// This function prints an error message for the given error inside the 
+/// ```enum``` ```RequestError```.
+pub fn request_error_messages(e: RequestError) {
+    match e {
+        RequestError::AuthCreationFail => { 
+            println!("Failed to create basic auth.");
+            return
+        },
+        RequestError::QuestionDeserializeFail => {
+            println!("Failed to deserialize API response.");
+            return
+        },
+        RequestError::QuestionRequestFail => {
+            println!("Failed to make HTTP request for question.");
+            return;
+        },
+        RequestError::SubmitRequestFail => {
+            println!("Failed to make HTTP request to submit answer.");
+            return;
+        },
+        RequestError::SubmitSerializeFail => {
+            println!("Failed to serialize request body to submit answer.");
+            return;
+        }
+    }
 }
