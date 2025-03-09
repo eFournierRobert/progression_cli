@@ -19,7 +19,7 @@ pub struct Attributes {
     pub résultat: Option<bool>,
     pub sortie_erreur: Option<String>,
     pub sortie_observée: Option<String>,
-    pub temps_exécution: Option<u8>
+    pub temps_exécution: Option<u16>
 }
 
 #[derive(Deserialize, Debug)]

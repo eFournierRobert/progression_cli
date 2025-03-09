@@ -2,7 +2,7 @@ mod request;
 mod serialize;
 mod deserialize;
 
-use std::{fs::{self, File}, io::Write, process::exit};
+use std::{collections::HashMap, fs::{self, File}, io::Write, process::exit};
 use crate::{structs::submit_response::SubmitResponse, utils::{file_creation_error_messages, read_code_from_file, read_uri_from_dotfile, request_error_messages, FileCreationError}};
 use request::post_answers;
 
@@ -13,16 +13,16 @@ pub enum SubmitError {
 
 pub fn submit_answer() {
     let uri = read_uri_from_dotfile();
-    let file_name = match get_question_file_name() {
-        Ok(name) => name,
+    let file = match get_question_file_name() {
+        Ok(file_info) => file_info,
         Err(e) => {
             print_error_message(e);
             exit(-1);
         }
     };
-    let code = read_code_from_file(file_name);
+    let code = read_code_from_file(file.get("filename").unwrap());
 
-    match post_answers(uri, code) {
+    match post_answers(uri, code, file.get("filetype").unwrap()) {
         Ok(submit_response) => {
             match create_answer_file(submit_response) {
                 Ok(_) => (),
@@ -56,7 +56,7 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
             "# Retour\n\n***Réussi: {}***\n\nTests Réussis: {}\n\nFeedback: {}\n\n---\n\n",
             submit_response.data.attributes.réussi.unwrap(),
             submit_response.data.attributes.tests_réussis.unwrap(),
-            submit_response.data.attributes.feedback.unwrap()
+            submit_response.data.attributes.feedback.unwrap_or("Aucun feedback".to_string())
         ) {
             Ok(_) => {
                 for res in submit_response.included {
@@ -83,7 +83,7 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
     }
 }
 
-fn get_question_file_name() -> Result<String, SubmitError>{
+fn get_question_file_name() -> Result<HashMap<String, String>, SubmitError>{
     let paths = fs::read_dir("./").unwrap();
 
     for path in paths {
@@ -94,7 +94,16 @@ fn get_question_file_name() -> Result<String, SubmitError>{
                 match file_name.to_string_lossy().get(0..8) {
                     Some(x) => { 
                         if x == "question".to_string() {
-                            return Ok(file_name.to_string_lossy().to_string());
+                            let mut ret = HashMap::new();
+                            let filename = file_name.to_string_lossy().to_string();
+
+                            ret.insert("filename".to_string(), filename.clone());
+                            ret.insert(
+                                "filetype".to_string(),
+                                filename.get(8..filename.len()).unwrap().to_string()
+                            );
+
+                            return Ok(ret);
                         }
                     },
                     None => {}

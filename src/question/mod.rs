@@ -75,7 +75,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         };
 
         match write!(
-            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n{}\n\n**Licence: {}**",
+            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n\n{}\n\n**Licence: {}**",
             question_attributes.titre.unwrap(),
             question_attributes.niveau.unwrap_or("Inconnue".to_string()),
             question_attributes.auteur.unwrap_or("Auteur inconnu".to_string()),

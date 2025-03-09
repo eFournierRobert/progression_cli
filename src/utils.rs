@@ -7,7 +7,8 @@ pub enum RequestError {
     QuestionDeserializeFail,
     SubmitSerializeFail,
     SubmitRequestFail,
-    SubmitDeserializeFail
+    SubmitDeserializeFail,
+    FailToGetLangage
 }
 
 pub enum FileCreationError {
@@ -23,7 +24,7 @@ pub fn read_uri_from_dotfile() -> String {
     fs::read_to_string(".progcli").expect(".progcli not found")
 }
 
-pub fn read_code_from_file(file: String) -> String{
+pub fn read_code_from_file(file: &String) -> String{
     fs::read_to_string(file).expect("Couldn't read code from {file}")
 }
 
@@ -86,6 +87,10 @@ pub fn request_error_messages(e: RequestError) {
         },
         RequestError::SubmitDeserializeFail => {
             println!("Failed to deserialize response from submit answer.");
+            return;
+        },
+        RequestError::FailToGetLangage => {
+            println!("Couldn't get language from file type");
             return;
         }
     }

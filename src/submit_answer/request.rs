@@ -2,10 +2,15 @@ use reqwest::blocking::Client;
 use crate::{structs::{submit::{Attributes, Data, SubmitBody}, submit_response::SubmitResponse}, utils::{get_api_url, get_username_password, RequestError}};
 use super::{deserialize::deserialize_answer, serialize::serialize_body};
 
-pub fn post_answers(uri: String, code: String) -> Result<SubmitResponse, RequestError>{
+pub fn post_answers(uri: String, code: String, file_type: &String) -> Result<SubmitResponse, RequestError>{
     let auth = match get_username_password() {
         Ok(auth) => auth,
         Err(_) => return Err(RequestError::AuthCreationFail)
+    };
+
+    let language = match get_langage(file_type) {
+        Some(lan) => lan,
+        None => return Err(RequestError::FailToGetLangage)
     };
 
     let username = auth.get("username").unwrap();
@@ -15,7 +20,7 @@ pub fn post_answers(uri: String, code: String) -> Result<SubmitResponse, Request
             request_type: "tentative".to_string(),
             attributes: Attributes {
                 code,
-                langage: "python".to_string()
+                langage: language
             }
         }
     };
@@ -55,4 +60,16 @@ pub fn post_answers(uri: String, code: String) -> Result<SubmitResponse, Request
             return Err(RequestError::SubmitRequestFail)
         }
     }
+}
+
+fn get_langage(file_type: &String) -> Option<String> {
+    return match file_type.as_str() {
+        ".py" => Some(String::from("python")),
+        ".java" => Some(String::from("java")),
+        ".cs" => Some(String::from("c#")),
+        ".rs" => Some(String::from("rust")),
+        ".js" => Some(String::from("javascript")),
+        ".kt" => Some(String::from("kotlin")),
+        _ => None
+    };
 }
