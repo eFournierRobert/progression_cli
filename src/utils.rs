@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, io};
+use std::{collections::HashMap, fs, io::{self, Write}};
 
 #[derive(Debug)]
 pub enum RequestError {
@@ -47,11 +47,13 @@ pub fn get_api_url() -> String {
 pub fn get_username_password() -> Result<HashMap<String, String>, io::Error>{
     let mut username = String::new();
 
-    println!("Username: ");
+    print!("Username: ");
+    std::io::stdout().flush().unwrap(); // Flushing buffer to print the print! statement.
     io::stdin().read_line(&mut username).expect("Failed to read username");
     username.pop(); // Remove newline character
 
-    println!("Password: ");
+    print!("Password: ");
+    std::io::stdout().flush().unwrap(); // Flushing buffer to print the print! statement.
     let password =  match rpassword::read_password(){
         Ok(pass) => pass,
         Err(e) => return Err(e)

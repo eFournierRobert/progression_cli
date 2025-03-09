@@ -14,6 +14,8 @@ pub fn post_answers(uri: String, code: String, file_type: &String) -> Result<Sub
         Err(_) => return Err(RequestError::AuthCreationFail)
     };
 
+    println!("Sending answer...");
+
     let language = match get_langage(file_type) {
         Some(lan) => lan,
         None => return Err(RequestError::FailToGetLangage)
@@ -54,6 +56,8 @@ pub fn post_answers(uri: String, code: String, file_type: &String) -> Result<Sub
     if result.is_err() {
         return Err(RequestError::SubmitRequestFail)
     } else {
+        println!("Received result");
+
         let result = result.unwrap();
 
         if result.status() == 200 {

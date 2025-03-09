@@ -52,6 +52,8 @@ pub fn submit_answer() {
 /// 
 /// In case of errors, it will return an error from the ```FileCreationError``` enum.
 fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreationError>{
+    println!("Creating answer.md...");
+
     let answer = fs::exists("answer.md").unwrap();
 
     if answer {
@@ -86,6 +88,7 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
                     }
                 }
 
+                println!("answer.md created");
                 return Ok(())
             },
             Err(_) => return Err(FileCreationError::FailedCreateAnswer)
