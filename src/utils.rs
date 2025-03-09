@@ -19,11 +19,16 @@ pub enum FileCreationError {
     FailedCreateAnswer
 }
 
-
+/// Reads the URI from the ```.progcli``` file.
+/// 
+/// This function reads the current question URI and returns it.
 pub fn read_uri_from_dotfile() -> String {
     fs::read_to_string(".progcli").expect(".progcli not found")
 }
 
+/// Reads the code of the given question file.
+/// 
+/// This function reads the code of the given question file and returns it.
 pub fn read_code_from_file(file: &String) -> String{
     fs::read_to_string(file).expect("Couldn't read code from {file}")
 }

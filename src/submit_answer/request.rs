@@ -2,6 +2,12 @@ use reqwest::blocking::Client;
 use crate::{structs::{submit::{Attributes, Data, SubmitBody}, submit_response::SubmitResponse}, utils::{get_api_url, get_username_password, RequestError}};
 use super::{deserialize::deserialize_answer, serialize::serialize_body};
 
+/// Post an answer for a given question and receive a ```SubmitResponse``` for it.
+/// 
+/// This function submits an answer for the given question and returns a struct ```SubmitResponse```
+/// with the whole response from the server.
+/// 
+/// In case of error, it will return an error from the ```RequestError``` enum.
 pub fn post_answers(uri: String, code: String, file_type: &String) -> Result<SubmitResponse, RequestError>{
     let auth = match get_username_password() {
         Ok(auth) => auth,
@@ -62,6 +68,10 @@ pub fn post_answers(uri: String, code: String, file_type: &String) -> Result<Sub
     }
 }
 
+/// Returns the language for the given file extension.
+/// 
+/// This function takes a file extension and returns the 
+/// programming language for that file extension in an ```Option```.
 fn get_langage(file_type: &String) -> Option<String> {
     return match file_type.as_str() {
         ".py" => Some(String::from("python")),
