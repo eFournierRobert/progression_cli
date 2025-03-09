@@ -1,8 +1,6 @@
-mod deserialize;
-
 use std::{collections::HashMap, io};
 use reqwest::blocking::Client;
-use crate::structs::question::Question;
+use crate::{question::deserialize, structs::question::Question};
 
 #[derive(Debug)]
 pub enum RequestError {
