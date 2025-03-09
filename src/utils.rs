@@ -6,7 +6,8 @@ pub enum RequestError {
     QuestionRequestFail,
     QuestionDeserializeFail,
     SubmitSerializeFail,
-    SubmitRequestFail
+    SubmitRequestFail,
+    SubmitDeserializeFail
 }
 
 pub fn read_uri_from_dotfile() -> String {
@@ -72,6 +73,10 @@ pub fn request_error_messages(e: RequestError) {
         },
         RequestError::SubmitSerializeFail => {
             println!("Failed to serialize request body to submit answer.");
+            return;
+        },
+        RequestError::SubmitDeserializeFail => {
+            println!("Failed to deserialize response from submit answer.");
             return;
         }
     }
