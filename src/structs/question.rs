@@ -34,6 +34,9 @@ pub struct Attributes {
     pub licence: Option<String>
 }
 
+/// IncludedAttributes ```struct```.
+/// 
+/// This ```struct``` is the Attributes in the included data for a Question.
 #[derive(Deserialize, Debug, Clone)]
 pub struct IncludedAttributes {
     pub code: String,
@@ -42,7 +45,7 @@ pub struct IncludedAttributes {
 
 /// Included ```struct```.
 /// 
-/// This ```struct``` is the container for all the data regarding a Question.
+/// This ```struct``` contains the included data when getting a Question.
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Included {
