@@ -69,7 +69,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 
     if enonce_file.is_ok() {
         let mut file = enonce_file.unwrap();
-        let question_attributes = match question.data.attributes.clone() {
+        let question_attributes = match question.data.attributes {
             Some(attributes) => attributes,
             None => return Err(FileCreationError::FailedCreateEnonce)
         };
@@ -90,19 +90,21 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         return Err(FileCreationError::FailedCreateEnonce);
     }
 
-    for included_code in question.included.iter() {
+    for included in question.included.iter() {
         match only_lang {
             Some(lan) => {
-                if *lan == included_code.included_attributes.langage {
-                    match create_question_file(&included_code.included_attributes) {
-                        Ok(_) => println!("Question file created"),
-                        Err(e) => return Err(e)
+                if included.included_type == "ebauche" {
+                    if lan == included.included_attributes.langage.as_ref().unwrap() {
+                        match create_question_file(&included.included_attributes) {
+                            Ok(_) => println!("Question file created"),
+                            Err(e) => return Err(e)
+                        }
+                        break;
                     }
-                    break;
                 }
             },
             None => {
-                match create_question_file(&included_code.included_attributes) {
+                match create_question_file(&included.included_attributes) {
                     Ok(_) => println!("Question file created"),
                     Err(e) => return Err(e)
                 }
@@ -120,7 +122,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 /// manages the creation of a single file. It will create a file for the given language inside 
 /// ```question_code``` and fill it with the given code.
 fn create_question_file(question_code: &IncludedAttributes) -> Result<(), FileCreationError>{
-    let question_file = match question_code.langage.as_str() {
+    let question_file = match question_code.langage.as_ref().unwrap().as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
         "c#" => File::create("question.cs"),
@@ -133,7 +135,7 @@ fn create_question_file(question_code: &IncludedAttributes) -> Result<(), FileCr
     if question_file.is_ok() {
         let mut file = question_file.unwrap();
         
-        match write!(file, "{}", question_code.code) {
+        match write!(file, "{}", question_code.code.as_ref().unwrap()) {
             Ok(_) => Ok(()),
             Err(_) => return Err(FileCreationError::FailedCreateQuestion)
         }
