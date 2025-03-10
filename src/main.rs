@@ -1,7 +1,8 @@
-pub mod structs;
-pub mod utils;
 mod question;
+pub mod structs;
 mod submit_answer;
+mod tests;
+pub mod utils;
 
 use clap::{command, Arg, ArgAction};
 use submit_answer::submit_answer;
@@ -14,14 +15,14 @@ fn main() {
             Arg::new("only-lang")
                 .long("only-lang")
                 .help("Clone only one language question")
-                .required(false)
+                .required(false),
         )
         .arg(
             Arg::new("clone")
                 .short('c')
                 .long("clone")
                 .help("Clone the given question with its URL")
-                .required(false)
+                .required(false),
         )
         .arg(
             Arg::new("submit")
@@ -29,7 +30,7 @@ fn main() {
                 .long("submit")
                 .short('s')
                 .help("Submit the answer in the current directory")
-                .required(false)
+                .required(false),
         )
         .arg_required_else_help(true)
         .get_matches();

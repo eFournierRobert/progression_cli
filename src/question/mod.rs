@@ -1,15 +1,22 @@
+pub mod deserialize;
 mod request;
-mod deserialize;
 
-use std::{env, fs::{self, File}, io::Write, process::exit};
-use crate::{structs::question::{Attributes,  Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
-
+use crate::{
+    structs::question::{Attributes, Question},
+    utils::{file_creation_error_messages, request_error_messages, FileCreationError},
+};
+use std::{
+    env,
+    fs::{self, File},
+    io::Write,
+    process::exit,
+};
 
 /// Function to clone the question in a folder given the URL.
-/// 
+///
 /// This function will do the request to the Progression API to get question, then it creates the files
 /// inside a folder named after the question title.
-/// 
+///
 /// It will manage the errors along the way and print the error messages.
 pub fn clone(url: &String, only_lang: Option<&String>) {
     let question_uri = get_question_uri_from_url(url);
@@ -17,9 +24,9 @@ pub fn clone(url: &String, only_lang: Option<&String>) {
     if question_uri.is_some() {
         let question = match request::http_get_question(question_uri.unwrap()) {
             Ok(question) => question,
-            Err(e) => { 
+            Err(e) => {
                 request_error_messages(e);
-                exit(-1)   
+                exit(-1)
             }
         };
 
@@ -33,10 +40,10 @@ pub fn clone(url: &String, only_lang: Option<&String>) {
 }
 
 /// Function to create the folder and the necessary files for a question.
-/// 
+///
 /// This function will create the necessary files inside a folder named after the question title. If given ```Some()``` to ```only-lang```
 /// it will create a question file only for the given language.
-/// 
+///
 /// It returns a ```Result``` with either Unit or an error from the ```FileCreationError``` enum.
 fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), FileCreationError> {
     println!("Creating folder...");
@@ -44,13 +51,13 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     let titre_question = question.data.attributes.clone().unwrap().titre.unwrap();
 
     match fs::create_dir(&titre_question) {
-        Ok(_) => { 
+        Ok(_) => {
             println!("Folder created");
             let _ = env::set_current_dir(titre_question);
-        },
-        Err(_) => return Err(FileCreationError::FailedCreateFolder)
+        }
+        Err(_) => return Err(FileCreationError::FailedCreateFolder),
     }
-    
+
     println!("Creating files...");
 
     let prog_cli = File::create(".progcli");
@@ -59,7 +66,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         let mut file = prog_cli.unwrap();
         match write!(file, "{}", question.data.id) {
             Ok(_) => println!(".progcli file created"),
-            Err(_) => return Err(FileCreationError::FailedCreateDot)
+            Err(_) => return Err(FileCreationError::FailedCreateDot),
         }
     } else {
         return Err(FileCreationError::FailedCreateDot);
@@ -71,20 +78,29 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         let mut file = enonce_file.unwrap();
         let question_attributes = match question.data.attributes.clone() {
             Some(attributes) => attributes,
-            None => return Err(FileCreationError::FailedCreateEnonce)
+            None => return Err(FileCreationError::FailedCreateEnonce),
         };
 
         match write!(
-            file, "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n\n{}\n\n**Licence: {}**",
+            file,
+            "# {}\n\n***Niveau: {}***\n\n*Par: {}*\n\n{}\n\n{}\n\n**Licence: {}**",
             question_attributes.titre.unwrap(),
             question_attributes.niveau.unwrap_or("Inconnue".to_string()),
-            question_attributes.auteur.unwrap_or("Auteur inconnu".to_string()),
-            question_attributes.description.unwrap_or("Aucune description".to_string()),
-            question_attributes.énoncé.unwrap_or("Aucun énoncé".to_string()),
-            question_attributes.licence.unwrap_or("Aucune licence".to_string())
+            question_attributes
+                .auteur
+                .unwrap_or("Auteur inconnu".to_string()),
+            question_attributes
+                .description
+                .unwrap_or("Aucune description".to_string()),
+            question_attributes
+                .énoncé
+                .unwrap_or("Aucun énoncé".to_string()),
+            question_attributes
+                .licence
+                .unwrap_or("Aucune licence".to_string())
         ) {
             Ok(_) => println!("enonce.md file created"),
-            Err(_) => return Err(FileCreationError::FailedCreateEnonce)
+            Err(_) => return Err(FileCreationError::FailedCreateEnonce),
         }
     } else {
         return Err(FileCreationError::FailedCreateEnonce);
@@ -98,17 +114,15 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                 if *lan == question_code.langage.clone().unwrap() {
                     match create_question_file(question_code) {
                         Ok(_) => println!("Question file created"),
-                        Err(e) => return Err(e)
+                        Err(e) => return Err(e),
                     }
                     break;
                 }
-            },
-            None => {
-                match create_question_file(question_code) {
-                    Ok(_) => println!("Question file created"),
-                    Err(e) => return Err(e)
-                }
             }
+            None => match create_question_file(question_code) {
+                Ok(_) => println!("Question file created"),
+                Err(e) => return Err(e),
+            },
         }
     }
 
@@ -117,11 +131,11 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 }
 
 /// Function to create a question file.
-/// 
+///
 /// Since we need to create one or multiple question file under different scenario, this function
-/// manages the creation of a single file. It will create a file for the given language inside 
+/// manages the creation of a single file. It will create a file for the given language inside
 /// ```question_code``` and fill it with the given code.
-fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError>{
+fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError> {
     let question_file = match question_code.langage.unwrap().as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
@@ -129,15 +143,15 @@ fn create_question_file(question_code: Attributes) -> Result<(), FileCreationErr
         "rust" => File::create("question.rs"),
         "javascript" => File::create("question.js"),
         "kotlin" => File::create("question.kt"),
-        _ => return Err(FileCreationError::FailedCreateQuestion)
+        _ => return Err(FileCreationError::FailedCreateQuestion),
     };
 
     if question_file.is_ok() {
         let mut file = question_file.unwrap();
-        
+
         match write!(file, "{}", question_code.code.unwrap()) {
             Ok(_) => Ok(()),
-            Err(_) => return Err(FileCreationError::FailedCreateQuestion)
+            Err(_) => return Err(FileCreationError::FailedCreateQuestion),
         }
     } else {
         return Err(FileCreationError::FailedCreateQuestion);
@@ -145,7 +159,7 @@ fn create_question_file(question_code: Attributes) -> Result<(), FileCreationErr
 }
 
 /// Get the question URI from the URL.
-/// 
+///
 /// This function will extract the question URI from a given URL.
 fn get_question_uri_from_url(url: &String) -> Option<&str> {
     if url.contains("question?uri=") && url.contains("progression.crosemont.qc.ca") {
