@@ -2,7 +2,7 @@ mod request;
 mod deserialize;
 
 use std::{env, fs::{self, File}, io::Write, process::exit};
-use crate::{structs::question::{Attributes,  Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
+use crate::{structs::question::{IncludedAttributes, Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
 
 
 /// Function to clone the question in a folder given the URL.
@@ -91,12 +91,10 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     }
 
     for included_code in question.included.iter() {
-        let question_code = included_code.attributes.clone();
-
         match only_lang {
             Some(lan) => {
-                if *lan == question_code.langage.clone().unwrap() {
-                    match create_question_file(question_code) {
+                if *lan == included_code.included_attributes.langage {
+                    match create_question_file(&included_code.included_attributes) {
                         Ok(_) => println!("Question file created"),
                         Err(e) => return Err(e)
                     }
@@ -104,7 +102,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                 }
             },
             None => {
-                match create_question_file(question_code) {
+                match create_question_file(&included_code.included_attributes) {
                     Ok(_) => println!("Question file created"),
                     Err(e) => return Err(e)
                 }
@@ -121,8 +119,8 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 /// Since we need to create one or multiple question file under different scenario, this function
 /// manages the creation of a single file. It will create a file for the given language inside 
 /// ```question_code``` and fill it with the given code.
-fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError>{
-    let question_file = match question_code.langage.unwrap().as_str() {
+fn create_question_file(question_code: &IncludedAttributes) -> Result<(), FileCreationError>{
+    let question_file = match question_code.langage.as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
         "c#" => File::create("question.cs"),
@@ -135,7 +133,7 @@ fn create_question_file(question_code: Attributes) -> Result<(), FileCreationErr
     if question_file.is_ok() {
         let mut file = question_file.unwrap();
         
-        match write!(file, "{}", question_code.code.unwrap()) {
+        match write!(file, "{}", question_code.code) {
             Ok(_) => Ok(()),
             Err(_) => return Err(FileCreationError::FailedCreateQuestion)
         }
