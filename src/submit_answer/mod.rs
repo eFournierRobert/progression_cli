@@ -77,11 +77,11 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
                     match writeln!(
                         answer_file,
                         "Résultat est bon: {}\n\nSortie Observée: \n```\n{}```\n\nSortie Erreur: \n```\n{}```\n\nFeedback: {}\n\nTemps d'exécution: {}ms\n\n---",
-                        res.attributes.résultat.unwrap(),
-                        res.attributes.sortie_observée.unwrap_or("Aucune sortie".to_string()),
-                        res.attributes.sortie_erreur.unwrap_or("Aucune erreur".to_string()),
-                        res.attributes.feedback.unwrap_or("Aucun feedback".to_string()),
-                        res.attributes.temps_exécution.unwrap()
+                        res.included_attrbiutes.résultat.unwrap(),
+                        res.included_attrbiutes.sortie_observée.unwrap_or("Aucune sortie".to_string()),
+                        res.included_attrbiutes.sortie_erreur.unwrap_or("Aucune erreur".to_string()),
+                        res.included_attrbiutes.feedback.unwrap_or("Aucun feedback".to_string()),
+                        res.included_attrbiutes.temps_exécution.unwrap()
                     ) {
                         Ok(_) => {},
                         Err(_) => return Err(FileCreationError::FailedCreateAnswer)

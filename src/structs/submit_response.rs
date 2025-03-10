@@ -22,15 +22,21 @@ pub struct Data {
 /// Attributes ```struct```.
 /// 
 /// This ```struct``` contains all the attributes received
-/// after a submit POST. **Note that feedback, réussi and tests_réussis
-/// are all under SubmitResponse.data.attributes and résultat, 
-/// sortie_erreur, sortie_observée and temps_exécution are all under
-/// SubmitResponse.included.attributes**.
+/// after a submit POST.
 #[derive(Deserialize, Debug)]
 pub struct Attributes {
     pub feedback: Option<String>,
     pub réussi: Option<bool>,
-    pub tests_réussis: Option<u8>,
+    pub tests_réussis: Option<u8>
+}
+
+/// IncludedAttributes ```struct```
+/// 
+/// This ```struct``` contains all the attributes included
+/// in the response of a submit POST.
+#[derive(Deserialize, Debug)]
+pub struct IncludedAttributes {
+    pub feedback: Option<String>,
     pub résultat: Option<bool>,
     pub sortie_erreur: Option<String>,
     pub sortie_observée: Option<String>,
@@ -39,13 +45,10 @@ pub struct Attributes {
 
 /// Included ```struct```.
 /// 
-/// This ```struct``` is the container for all the data received
+/// This ```struct``` is the container for all the included data received
 /// after a submit POST.
-/// 
-/// Only used to get the résultat, sortie_erreur, sortie_observée and 
-/// temps_exécution in the JSON returned from the API.
-/// **All the other attributes are store inside ```Data```**.
 #[derive(Deserialize, Debug)]
 pub struct Included {
-    pub attributes: Attributes
+    #[serde(rename="attributes")]
+    pub included_attrbiutes: IncludedAttributes
 }
