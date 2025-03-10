@@ -1,7 +1,7 @@
 mod request;
 mod deserialize;
 
-use std::{env, fs::{self, File}, io::Write, process::exit};
+use std::{env, fs::{self, File, OpenOptions}, io::Write, process::exit};
 use crate::{structs::question::{IncludedAttributes, Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
 
 
@@ -93,20 +93,45 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     for included in question.included.iter() {
         match only_lang {
             Some(lan) => {
-                if included.included_type == "ebauche" {
-                    if lan == included.included_attributes.langage.as_ref().unwrap() {
+                match included.included_type.as_str() {
+                    "ebauche" => {
+                        if lan == included.included_attributes.langage.as_ref().unwrap() {
+                            match create_question_file(&included.included_attributes) {
+                                Ok(_) => println!("Question file created"),
+                                Err(e) => return Err(e)
+                            }
+                            break;
+                        }
+                    },
+                    "tests" => {},
+                    _ => {}
+                }
+            },
+            None => {
+                match included.included_type.as_str() {
+                    "ebauche" => {
                         match create_question_file(&included.included_attributes) {
                             Ok(_) => println!("Question file created"),
                             Err(e) => return Err(e)
                         }
-                        break;
-                    }
-                }
-            },
-            None => {
-                match create_question_file(&included.included_attributes) {
-                    Ok(_) => println!("Question file created"),
-                    Err(e) => return Err(e)
+                    },
+                    "test" => {
+                        if !included.included_attributes.caché.unwrap() {
+                            let mut file = OpenOptions::new()
+                                .write(true)
+                                .append(true)
+                                .open("enonce.md")
+                                .unwrap();
+                            _ = write!(
+                                file,
+                                "\n\n## Test: {}\n\nEntrée: \n```\n{}\n```\n\nSortie Attendue: \n```\n{}\n```",
+                                included.included_attributes.nom.as_ref().unwrap(),
+                                included.included_attributes.entrée.as_ref().unwrap(),
+                                included.included_attributes.sortie_attendue.as_ref().unwrap()
+                            );
+                        }
+                    },
+                    _ => {}
                 }
             }
         }

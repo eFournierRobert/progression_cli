@@ -31,7 +31,7 @@ pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
         api_url + 
         "question/" + 
         question_uri +
-        "?include=questions,ebauches"
+        "?include=questions,ebauches,tests"
     )
             .basic_auth(
                 username,

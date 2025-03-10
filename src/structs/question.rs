@@ -40,7 +40,11 @@ pub struct Attributes {
 #[derive(Deserialize, Debug, Clone)]
 pub struct IncludedAttributes {
     pub code: Option<String>,
-    pub langage: Option<String>
+    pub langage: Option<String>,
+    pub nom: Option<String>,
+    pub caché: Option<bool>,
+    pub sortie_attendue: Option<String>,
+    pub entrée: Option<String>
 }
 
 /// Included ```struct```.
