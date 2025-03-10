@@ -23,8 +23,6 @@ pub struct Data {
 /// Attributes ```struct```.
 /// 
 /// This ```struct``` is the container for all the useful attributes for a Question.
-/// **Note that ```code``` and ```langage``` are usually stored inside ```Question.included.attributes```
-/// and not ```Question.data.attributes```**.
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Attributes {
@@ -33,19 +31,21 @@ pub struct Attributes {
     pub niveau: Option<String>,
     pub titre: Option<String>,
     pub énoncé: Option<String>,
-    pub licence: Option<String>,
-    pub code: Option<String>,
-    pub langage: Option<String>
+    pub licence: Option<String>
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct IncludedAttributes {
+    pub code: String,
+    pub langage: String
 }
 
 /// Included ```struct```.
 /// 
 /// This ```struct``` is the container for all the data regarding a Question.
-/// 
-/// Only used to get the code and langage in the JSON returned from the API.
-/// **All the other attributes are store inside ```Data```**.
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Included {
-    pub attributes: Attributes
+    #[serde(rename="attributes")]
+    pub included_attributes: IncludedAttributes
 }
