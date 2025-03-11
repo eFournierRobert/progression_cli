@@ -68,4 +68,38 @@ mod tests {
             assert!(!included.attributes.code.is_none());
         });
     }
+
+    #[test]
+    fn test_given_an_invalid_json_when_we_pass_the_json_to_deserialize_we_get_an_error() {
+        let json_string = "json";
+
+        let result = deserialize_question(json_string.to_string());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_given_an_invalid_json_with_missing_fields_when_we_pass_the_json_to_deserialize_we_get_an_error(
+    ) {
+        let json_string = r#"
+        {
+            "data": {
+                "id": "1"
+            }
+        }
+        "#;
+
+        let result = deserialize_question(json_string.to_string());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_given_an_empty_json_with_when_we_pass_the_json_to_deserialize_we_get_an_error() {
+        let json_string = "{}";
+
+        let result = deserialize_question(json_string.to_string());
+
+        assert!(result.is_err());
+    }
 }
