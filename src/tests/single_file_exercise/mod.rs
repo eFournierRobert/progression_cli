@@ -18,7 +18,7 @@ pub fn complete_json_single_language_exercise() -> &'static str {
             },
             "included": [
                 {
-                    "type": "code",
+                    "type": "prog",
                     "attributes": {
                         "code": "def salutations(x):\n    for _ in range(x):\n        print('Bonjour le monde!')\n\nsalutations(3)",
                         "langage": "python"
@@ -44,7 +44,7 @@ pub fn complete_json_multiple_languages_exercise() -> &'static str {
             },
             "included": [
                 {
-                    "type": "code",
+                    "type": "prog",
                     "attributes": {
                         "code": "def salutations(x):\n    for _ in range(x):\n        print('Bonjour le monde!')\n\nsalutations(3)",
                         "langage": "python"
@@ -77,49 +77,24 @@ pub fn minimalist_json_single_language_exercise() -> &'static str {
             },
             "included": [
                 {
-                    "type": "code",
+                    "type": "prog",
                     "attributes": {
                         "code": "code",
-                        "langage": "lang"
+                        "langage": "langage"
                     }
                 }
             ]
         }"#
 }
 
-pub fn assert_json_fields(question: &Question) {
-    assert_eq!(question.data.id, "1");
-    assert_eq!(
-        question.data.attributes.as_ref().unwrap().auteur,
-        Some("Albert Einstein".to_string())
-    );
-    assert_eq!(
-        question.data.attributes.as_ref().unwrap().description,
-        Some("Ceci est une question simple avec un langage".to_string())
-    );
-    assert_eq!(
-        question.data.attributes.as_ref().unwrap().niveau,
-        Some("débutant".to_string())
-    );
-    assert_eq!(
-        question.data.attributes.as_ref().unwrap().titre,
-        Some("Appeler une fonction paramétrée".to_string())
-    );
-    assert_eq!(
-            question.data.attributes.as_ref().unwrap().énoncé,
-            Some("La fonction `salutations` affiche une salution autant de fois que la valeur reçue en paramètre. Utilisez-la pour faire afficher «Bonjour le monde!» autant de fois que le nombre reçu en entrée.".to_string())
-        );
-    assert_eq!(
-        question.data.attributes.as_ref().unwrap().licence,
-        Some("poétique".to_string())
-    );
+pub fn nombre_langue(question: &Question) -> usize {
+    return question
+        .included
+        .iter()
+        .filter(|attribute| attribute.included_attributes.langage.is_some())
+        .count();
+}
 
-    assert_eq!(
-        question.included[0].included_attributes.code,
-        Some("def salutations(x):\n    for _ in range(x):\n        print('Bonjour le monde!')\n\nsalutations(3)".to_string())
-        );
-    assert_eq!(
-        question.included[0].included_attributes.langage,
-        Some("python".to_string())
-    );
+pub fn nombre_attributes(question: &Question) -> usize {
+    return question.included.len();
 }

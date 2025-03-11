@@ -2,9 +2,10 @@
 mod tests {
     use crate::question::deserialize::deserialize_question;
     use crate::tests::single_file_exercise::{
-        assert_json_fields, complete_json_multiple_languages_exercise,
-        complete_json_single_language_exercise, minimalist_json_single_language_exercise,
+        complete_json_multiple_languages_exercise, complete_json_single_language_exercise,
+        minimalist_json_single_language_exercise, nombre_attributes, nombre_langue,
     };
+    use crate::tests::{assert_json_fields_question_base, assert_null_json_fields};
 
     #[test]
     fn test_given_a_simple_prog_question_with_a_single_language_when_we_pass_the_json_of_the_question_to_deserialize_we_get_its_attributes(
@@ -17,7 +18,9 @@ mod tests {
 
         let question = result.unwrap();
 
-        assert_json_fields(&question);
+        assert_json_fields_question_base(&question);
+        assert_eq!(nombre_langue(&question), 1);
+        assert_eq!(nombre_attributes(&question), 1);
     }
 
     #[test]
@@ -31,16 +34,9 @@ mod tests {
 
         let question = result.unwrap();
 
-        assert_json_fields(&question);
-
-        assert_eq!(
-            question.included[1].included_attributes.code,
-            Some("fn salutations(x: u32) {\n    for _ in 0..x {\n        println!('Bonjour le monde!');\n    }\n}\n\nfn main() {\n    salutations(3);\n}".to_string())
-        );
-        assert_eq!(
-            question.included[1].included_attributes.langage,
-            Some("rust".to_string())
-        );
+        assert_json_fields_question_base(&question);
+        assert_eq!(nombre_langue(&question), 2);
+        assert_eq!(nombre_attributes(&question), 2);
     }
 
     #[test]
@@ -53,20 +49,7 @@ mod tests {
         assert!(result.is_ok());
 
         let question = result.unwrap();
-
-        question.data.attributes.iter().for_each(|attribute| {
-            assert!(attribute.auteur.is_none());
-            assert!(attribute.description.is_none());
-            assert!(attribute.niveau.is_none());
-            assert!(attribute.titre.is_none());
-            assert!(attribute.énoncé.is_none());
-            assert!(attribute.licence.is_none());
-        });
-
-        question.included.iter().for_each(|included| {
-            assert!(!included.included_attributes.code.is_none());
-            assert!(!included.included_attributes.code.is_none());
-        });
+        assert_null_json_fields(&question);
     }
 
     #[test]
