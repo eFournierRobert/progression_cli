@@ -100,10 +100,16 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                                 Ok(_) => println!("Question file created"),
                                 Err(e) => return Err(e)
                             }
-                            break;
                         }
                     },
-                    "tests" => {},
+                    "test" => {
+                        if !included.included_attributes.caché.unwrap() {
+                            match write_test_info_to_enonce_file(&included.included_attributes) {
+                                Ok(_) => {},
+                                Err(e) => return Err(e)
+                            }
+                        }
+                    },
                     _ => {}
                 }
             },
@@ -117,18 +123,10 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                     },
                     "test" => {
                         if !included.included_attributes.caché.unwrap() {
-                            let mut file = OpenOptions::new()
-                                .write(true)
-                                .append(true)
-                                .open("enonce.md")
-                                .unwrap();
-                            _ = write!(
-                                file,
-                                "\n\n## Test: {}\n\nEntrée: \n```\n{}\n```\n\nSortie Attendue: \n```\n{}\n```",
-                                included.included_attributes.nom.as_ref().unwrap(),
-                                included.included_attributes.entrée.as_ref().unwrap(),
-                                included.included_attributes.sortie_attendue.as_ref().unwrap()
-                            );
+                            match write_test_info_to_enonce_file(&included.included_attributes) {
+                                Ok(_) => {},
+                                Err(e) => return Err(e)
+                            }
                         }
                     },
                     _ => {}
@@ -141,12 +139,34 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     Ok(())
 }
 
+/// Function to write the test info from the given ```IncludedAttributes``` inside ```enonce.md```.
+/// 
+/// This function appends to ```enonce.md``` the informations of the given test.
+fn write_test_info_to_enonce_file(question_test: &IncludedAttributes) -> Result<(), FileCreationError> {
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("enonce.md")
+        .unwrap();
+    
+    match write!(
+        file,
+        "\n\n## Test: {}\n\nEntrée: \n```\n{}\n```\n\nSortie Attendue: \n```\n{}\n```",
+        question_test.nom.as_ref().unwrap(),
+        question_test.entrée.as_ref().unwrap(),
+        question_test.sortie_attendue.as_ref().unwrap()
+    ) {
+        Ok(_) => Ok(()),
+        Err(_) => return Err(FileCreationError::FailedToWriteTest)
+    }
+}
+
 /// Function to create a question file.
 /// 
 /// Since we need to create one or multiple question file under different scenario, this function
 /// manages the creation of a single file. It will create a file for the given language inside 
 /// ```question_code``` and fill it with the given code.
-fn create_question_file(question_code: &IncludedAttributes) -> Result<(), FileCreationError>{
+fn create_question_file(question_code: &IncludedAttributes) -> Result<(), FileCreationError> {
     let question_file = match question_code.langage.as_ref().unwrap().as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
