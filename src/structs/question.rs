@@ -39,8 +39,12 @@ pub struct Attributes {
 /// This ```struct``` is the Attributes in the included data for a Question.
 #[derive(Deserialize, Debug, Clone)]
 pub struct IncludedAttributes {
-    pub code: String,
-    pub langage: String
+    pub code: Option<String>,
+    pub langage: Option<String>,
+    pub nom: Option<String>,
+    pub caché: Option<bool>,
+    pub sortie_attendue: Option<String>,
+    pub entrée: Option<String>
 }
 
 /// Included ```struct```.
@@ -49,6 +53,8 @@ pub struct IncludedAttributes {
 #[derive(Deserialize, Debug, Clone)]
 #[allow(dead_code)]
 pub struct Included {
+    #[serde(rename="type")]
+    pub included_type: String,
     #[serde(rename="attributes")]
     pub included_attributes: IncludedAttributes
 }

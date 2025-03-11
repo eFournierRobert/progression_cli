@@ -52,7 +52,7 @@ To send an answer, you can go in the question directory and do :
 progression_cli -s
 ```
 
-This will send your answer to the API the return will be put in ```answer.md```. Right now, you **have** to have only one question draft in the directory for it to work.
+This will send your answer to the API the return will be put in ```answer.md```. Right now, you **have** to have only one question draft in the directory.
 
 ## Fonctionnalités planifiées / Planned functionalities
 - [x] Basic auth with base64
