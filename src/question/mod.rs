@@ -136,7 +136,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 /// manages the creation of a single file. It will create a file for the given language inside
 /// ```question_code``` and fill it with the given code.
 fn create_question_file(question_code: Attributes) -> Result<(), FileCreationError> {
-    let question_file = match question_code.langage.unwrap().as_str() {
+    let question_file = match question_code.description.unwrap().as_str() {
         "python" => File::create("question.py"),
         "java" => File::create("question.java"),
         "c#" => File::create("question.cs"),
