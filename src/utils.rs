@@ -17,7 +17,8 @@ pub enum FileCreationError {
     FailedCreateQuestion,
     FailedCreateFolder,
     FailedCreateAnswer,
-    FailedToWriteTest
+    FailedToWriteTest,
+    FolderAlreadyExist
 }
 
 /// Reads the URI from the ```.progcli``` file.
@@ -133,6 +134,10 @@ pub fn file_creation_error_messages(e: FileCreationError) {
         },
         FileCreationError::FailedToWriteTest => {
             println!("Failed to write test in enonce.md");
+            return
+        },
+        FileCreationError::FolderAlreadyExist => {
+            println!("Failed to create folder. Folder already exists and is not an empty directory.");
             return
         }
     }

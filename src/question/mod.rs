@@ -1,7 +1,7 @@
 mod request;
 mod deserialize;
 
-use std::{env, fs::{self, File, OpenOptions}, io::Write, process::exit};
+use std::{env, fs::{self, File, OpenOptions}, io::Write, path::Path, process::exit};
 use crate::{structs::question::{IncludedAttributes, Question}, utils::{file_creation_error_messages, request_error_messages, FileCreationError}};
 
 
@@ -42,13 +42,22 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
     println!("Creating folder...");
 
     let titre_question = question.data.attributes.clone().unwrap().titre.unwrap();
+    let folder_path = Path::new(&titre_question);
 
-    match fs::create_dir(&titre_question) {
-        Ok(_) => { 
-            println!("Folder created");
-            let _ = env::set_current_dir(titre_question);
-        },
-        Err(_) => return Err(FileCreationError::FailedCreateFolder)
+    if folder_path.exists() {
+        if !folder_path.read_dir().unwrap().next().is_none() {
+            return Err(FileCreationError::FolderAlreadyExist)
+        } else {
+            _ = env::set_current_dir(folder_path);
+        }
+    } else {
+        match fs::create_dir(&titre_question) {
+            Ok(_) => { 
+                println!("Folder created");
+                _ = env::set_current_dir(titre_question);
+            },
+            Err(_) => return Err(FileCreationError::FailedCreateFolder)
+        }
     }
     
     println!("Creating files...");
