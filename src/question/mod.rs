@@ -116,6 +116,8 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
         return Err(FileCreationError::FailedCreateEnonce);
     }
 
+    let mut test_num = 0u8;
+
     for included in question.included.iter() {
         match only_lang {
             Some(lan) => match included.included_type.as_str() {
@@ -129,10 +131,14 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                 }
                 "test" => {
                     if !included.included_attributes.caché.unwrap() {
-                        match write_test_info_to_enonce_file(&included.included_attributes) {
+                        match write_test_info_to_enonce_file(
+                            &included.included_attributes,
+                            test_num,
+                        ) {
                             Ok(_) => {}
                             Err(e) => return Err(e),
                         }
+                        test_num += 1;
                     }
                 }
                 _ => {}
@@ -144,10 +150,14 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
                 },
                 "test" => {
                     if !included.included_attributes.caché.unwrap() {
-                        match write_test_info_to_enonce_file(&included.included_attributes) {
+                        match write_test_info_to_enonce_file(
+                            &included.included_attributes,
+                            test_num,
+                        ) {
                             Ok(_) => {}
                             Err(e) => return Err(e),
                         }
+                        test_num += 1;
                     }
                 }
                 _ => {}
@@ -164,6 +174,7 @@ fn create_files(question: Question, only_lang: Option<&String>) -> Result<(), Fi
 /// This function appends to ```enonce.md``` the informations of the given test.
 fn write_test_info_to_enonce_file(
     question_test: &IncludedAttributes,
+    test_num: u8,
 ) -> Result<(), FileCreationError> {
     let mut file = OpenOptions::new()
         .write(true)
@@ -173,7 +184,8 @@ fn write_test_info_to_enonce_file(
 
     match write!(
         file,
-        "\n\n## Test: {}\n\nEntrée: \n```\n{}\n```\n\nSortie Attendue: \n```\n{}\n```",
+        "\n\n## Test {}: {}\n\nEntrée: \n```\n{}\n```\n\nSortie Attendue: \n```\n{}\n```",
+        test_num,
         question_test.nom.as_ref().unwrap(),
         question_test.entrée.as_ref().unwrap(),
         question_test.sortie_attendue.as_ref().unwrap()
