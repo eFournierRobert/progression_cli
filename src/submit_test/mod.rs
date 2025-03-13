@@ -59,7 +59,7 @@ fn create_test_file(test_response: SubmitTestResponse) -> Result<(), FileCreatio
 
         match writeln!(
             test_file,
-            "# Retour test\n\n***Réussi: {}***\n\nSortie Observée: \n```\n{}\n```\n\nSortie Erreur: \n```\n{}```\n\nFeedback: {}",
+            "# Retour test\n\n***Réussi: {}***\n\nSortie Observée: \n```\n{}\n```\n\nSortie Erreur: \n```\n{}```\n\nFeedback: {}\n\nTemps d'exécution: {}ms",
             test_response.data.attributes.résultat,
             test_response
                 .data
@@ -75,7 +75,11 @@ fn create_test_file(test_response: SubmitTestResponse) -> Result<(), FileCreatio
                 .data
                 .attributes
                 .feedback
-                .unwrap_or("Aucun feedback".to_string())
+                .unwrap_or("Aucun feedback".to_string()),
+            test_response
+                .data
+                .attributes
+                .temps_exécution
         ) {
             Ok(_) => {
                 println!("test.md created");
