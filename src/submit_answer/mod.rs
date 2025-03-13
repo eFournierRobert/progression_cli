@@ -5,22 +5,17 @@ mod serialize;
 use crate::{
     structs::submit_response::SubmitResponse,
     utils::{
-        FileCreationError, file_creation_error_messages, read_code_from_file,
-        read_uri_from_dotfile, request_error_messages,
+        FileCreationError, file_creation_error_messages, get_question_file_name,
+        print_submit_error_message, read_code_from_file, read_uri_from_dotfile,
+        request_error_messages,
     },
 };
 use request::post_answers;
 use std::{
-    collections::HashMap,
     fs::{self, File},
     io::Write,
     process::exit,
 };
-
-pub enum SubmitError {
-    QuestionFileNotFound,
-    CoultNotReadDirectory,
-}
 
 /// Submit an answer and print the response inside ```answer.md```.
 ///
@@ -114,61 +109,5 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
         }
     } else {
         return Err(FileCreationError::FailedCreateAnswer);
-    }
-}
-
-/// Gets the filename and type of the question file.
-///
-/// This function gets the name of the file and its file extension,
-/// then puts it inside a HashMap. Keys are ```filename``` and ```filetype```.
-///
-/// In case of errors, it will return an error from the ```SubmitError``` enum.
-fn get_question_file_name() -> Result<HashMap<String, String>, SubmitError> {
-    let paths = fs::read_dir("./").unwrap();
-
-    for path in paths {
-        match path {
-            Ok(res) => {
-                let file_name = res.file_name();
-
-                match file_name.to_string_lossy().get(0..8) {
-                    Some(x) => {
-                        if x == "question".to_string() {
-                            let mut ret = HashMap::new();
-                            let filename = file_name.to_string_lossy().to_string();
-
-                            ret.insert("filename".to_string(), filename.clone());
-                            ret.insert(
-                                "filetype".to_string(),
-                                filename.get(8..filename.len()).unwrap().to_string(),
-                            );
-
-                            return Ok(ret);
-                        }
-                    }
-                    None => {}
-                }
-            }
-            Err(_) => return Err(SubmitError::CoultNotReadDirectory),
-        }
-    }
-
-    Err(SubmitError::QuestionFileNotFound)
-}
-
-/// Prints an error message for a ```SubmitError```.
-///
-/// This function prints an error message depending on
-/// the type of the ```SubmitError```.
-fn print_submit_error_message(e: SubmitError) {
-    match e {
-        SubmitError::QuestionFileNotFound => {
-            println!("Could not find Question file");
-            return;
-        }
-        SubmitError::CoultNotReadDirectory => {
-            println!("Could not read current directory");
-            return;
-        }
     }
 }

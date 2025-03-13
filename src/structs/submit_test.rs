@@ -2,19 +2,19 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct SubmitTest {
-    data: Data,
+    pub data: Data,
 }
 
 #[derive(Serialize)]
 pub struct Data {
     #[serde(rename = "type")]
-    data_type: String,
-    attributes: Attributes,
+    pub data_type: String,
+    pub attributes: Attributes,
 }
 
 #[derive(Serialize)]
 pub struct Attributes {
-    langage: String,
-    code: String,
-    index: u8,
+    pub langage: String,
+    pub code: String,
+    pub index: String,
 }

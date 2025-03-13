@@ -7,8 +7,7 @@ pub struct SubmitTestResponse {
 
 #[derive(Deserialize)]
 pub struct Data {
-    #[serde(rename = "type")]
-    response_type: String,
+    pub attributes: Attributes,
 }
 #[derive(Deserialize)]
 pub struct Attributes {

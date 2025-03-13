@@ -1,6 +1,7 @@
 mod question;
 pub mod structs;
 mod submit_answer;
+mod submit_test;
 pub mod utils;
 
 use clap::{Arg, ArgAction, command};
@@ -31,6 +32,13 @@ fn main() {
                 .help("Submit the answer in the current directory")
                 .required(false),
         )
+        .arg(
+            Arg::new("submit_test")
+                .long("test")
+                .short('t')
+                .help("Try a specific test in enonce.md and get the response.")
+                .required(false),
+        )
         .arg_required_else_help(true)
         .get_matches();
 
@@ -39,6 +47,11 @@ fn main() {
 
     match matches.get_one::<String>("clone") {
         Some(url) => question::clone(url, only_lang),
+        _ => {}
+    }
+
+    match matches.get_one::<String>("submit_test") {
+        Some(test_num) => submit_test::submit_test(test_num),
         _ => {}
     }
 

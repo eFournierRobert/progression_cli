@@ -23,6 +23,12 @@ pub enum FileCreationError {
     FailedCreateAnswer,
     FailedToWriteTest,
     FolderAlreadyExist,
+    FailedToCreateTest,
+}
+
+pub enum SubmitError {
+    QuestionFileNotFound,
+    CoultNotReadDirectory,
 }
 
 /// Reads the URI from the ```.progcli``` file.
@@ -44,6 +50,45 @@ pub fn read_code_from_file(file: &String) -> String {
 /// Will return a ```String``` ""https://progression.crosemont.qc.ca/api/v1//"".
 pub fn get_api_url() -> String {
     String::from("https://progression.crosemont.qc.ca/api/v1//")
+}
+
+/// Gets the filename and type of the question file.
+///
+/// This function gets the name of the file and its file extension,
+/// then puts it inside a HashMap. Keys are ```filename``` and ```filetype```.
+///
+/// In case of errors, it will return an error from the ```SubmitError``` enum.
+pub fn get_question_file_name() -> Result<HashMap<String, String>, SubmitError> {
+    let paths = fs::read_dir("./").unwrap();
+
+    for path in paths {
+        match path {
+            Ok(res) => {
+                let file_name = res.file_name();
+
+                match file_name.to_string_lossy().get(0..8) {
+                    Some(x) => {
+                        if x == "question".to_string() {
+                            let mut ret = HashMap::new();
+                            let filename = file_name.to_string_lossy().to_string();
+
+                            ret.insert("filename".to_string(), filename.clone());
+                            ret.insert(
+                                "filetype".to_string(),
+                                filename.get(8..filename.len()).unwrap().to_string(),
+                            );
+
+                            return Ok(ret);
+                        }
+                    }
+                    None => {}
+                }
+            }
+            Err(_) => return Err(SubmitError::CoultNotReadDirectory),
+        }
+    }
+
+    Err(SubmitError::QuestionFileNotFound)
 }
 
 /// Ask the user for his username and password.
@@ -93,15 +138,15 @@ pub fn request_error_messages(e: RequestError) {
             return;
         }
         RequestError::SubmitRequestFail => {
-            println!("Failed to make HTTP request to submit answer.");
+            println!("Failed to make HTTP request to submit answer or test.");
             return;
         }
         RequestError::SubmitSerializeFail => {
-            println!("Failed to serialize request body to submit answer.");
+            println!("Failed to serialize request body to submit answer or test.");
             return;
         }
         RequestError::SubmitDeserializeFail => {
-            println!("Failed to deserialize response from submit answer.");
+            println!("Failed to deserialize response from submit answer or test.");
             return;
         }
         RequestError::FailToGetLangage => {
@@ -147,5 +192,42 @@ pub fn file_creation_error_messages(e: FileCreationError) {
             );
             return;
         }
+        FileCreationError::FailedToCreateTest => {
+            println!("Failed to create test.md");
+            return;
+        }
     }
+}
+
+/// Prints an error message for a ```SubmitError```.
+///
+/// This function prints an error message depending on
+/// the type of the ```SubmitError```.
+pub fn print_submit_error_message(e: SubmitError) {
+    match e {
+        SubmitError::QuestionFileNotFound => {
+            println!("Could not find Question file");
+            return;
+        }
+        SubmitError::CoultNotReadDirectory => {
+            println!("Could not read current directory");
+            return;
+        }
+    }
+}
+
+/// Returns the language for the given file extension.
+///
+/// This function takes a file extension and returns the
+/// programming language for that file extension in an ```Option```.
+pub fn get_langage(file_type: &String) -> Option<String> {
+    return match file_type.as_str() {
+        ".py" => Some(String::from("python")),
+        ".java" => Some(String::from("java")),
+        ".cs" => Some(String::from("c#")),
+        ".rs" => Some(String::from("rust")),
+        ".js" => Some(String::from("javascript")),
+        ".kt" => Some(String::from("kotlin")),
+        _ => None,
+    };
 }
