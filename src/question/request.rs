@@ -1,15 +1,19 @@
-use std::collections::HashMap;
+use crate::{
+    question::deserialize,
+    structs::question::Question,
+    utils::{RequestError, get_api_url, get_username_password},
+};
 use reqwest::blocking::Client;
-use crate::{question::deserialize, structs::question::Question, utils::{get_api_url, get_username_password, RequestError}};
+use std::collections::HashMap;
 
 /// Function getting the question from the API.
-/// 
+///
 /// This function takes the question URI and makes a GET request to the API. If successful,
 /// it will return a ```struct``` ```Question``` inside the ```Result```. If not, it will return
 /// a ```RequestError```.
-/// 
+///
 /// ```debugging``` makes some debugging print during execution if true.
-pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
+pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError> {
     let auth_result = get_username_password();
     let mut _auth = HashMap::new();
 
@@ -27,17 +31,10 @@ pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
     println!("Fetching question...");
 
     let client = Client::new();
-    let result = client.get(
-        api_url + 
-        "question/" + 
-        question_uri +
-        "?include=questions,ebauches,tests"
-    )
-            .basic_auth(
-                username,
-                password
-            )
-            .send();
+    let result = client
+        .get(api_url + "question/" + question_uri + "?include=questions,ebauches,tests")
+        .basic_auth(username, password)
+        .send();
 
     if result.is_err() {
         return Err(RequestError::QuestionRequestFail);
@@ -49,15 +46,12 @@ pub fn http_get_question(question_uri: &str) -> Result<Question, RequestError>{
                 Ok(question) => {
                     println!("Fetching done!");
                     Ok(question)
-                },
-                Err(_) => {
-                    Err(RequestError::QuestionDeserializeFail)
                 }
+                Err(_) => Err(RequestError::QuestionDeserializeFail),
             }
         } else {
             println!("{}", result.text().unwrap());
             Err(RequestError::QuestionDeserializeFail)
         }
-        
     }
 }
