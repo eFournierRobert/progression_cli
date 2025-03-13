@@ -19,7 +19,7 @@ use std::{
 
 /// Submit an answer and print the response inside ```answer.md```.
 ///
-/// This function is the main function that manages submitting and answer
+/// This function is the main function that manages submitting an answer
 /// and printing the result inside the file ```answer.md```.
 ///
 /// In case of errors, it prints the error messages and exit the program.
