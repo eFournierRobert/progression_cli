@@ -58,7 +58,7 @@ This will send your answer to the API the return will be put in ```answer.md```.
 - [x] Basic auth with base64
 - [x] Question cloning
 - [x] Submit answers
-- [ ] Submit tests
+- [x] Submit tests
 
 ## Build and run from source
 Build the package:
