@@ -71,7 +71,7 @@ fn create_test_file(test_response: SubmitTestResponse) -> Result<(), FileCreatio
 
         match writeln!(
             test_file,
-            "# Retour test\n\n***Réussi: {}***\n\nSortie Observée: \n```\n{}\n```\n\nSortie Erreur: \n```\n{}```\n\nFeedback: {}\n\nTemps d'exécution: {}ms",
+            "# Retour test\n\n***Réussi: {}***\n\nSortie Observée: \n```\n{}\n```\n\nSortie Erreur: \n```\n{}\n```\n\nFeedback: {}\n\nTemps d'exécution: {}ms",
             test_response.data.attributes.résultat,
             test_response
                 .data

@@ -84,7 +84,7 @@ fn create_answer_file(submit_response: SubmitResponse) -> Result<(), FileCreatio
                 for res in submit_response.included {
                     match writeln!(
                         answer_file,
-                        "Résultat est bon: {}\n\nSortie Observée: \n```\n{}```\n\nSortie Erreur: \n```\n{}```\n\nFeedback: {}\n\nTemps d'exécution: {}ms\n\n---",
+                        "Résultat est bon: {}\n\nSortie Observée: \n```\n{}\n```\n\nSortie Erreur: \n```\n{}\n```\n\nFeedback: {}\n\nTemps d'exécution: {}ms\n\n---",
                         res.included_attrbiutes.résultat.unwrap(),
                         res.included_attrbiutes
                             .sortie_observée
