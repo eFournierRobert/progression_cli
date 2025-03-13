@@ -19,13 +19,19 @@ use crate::{
 };
 
 /// Submit a test and print the response inside ```test.md```.
-/// 
+///
 /// This function os the main function that manages submitting a test
 /// and priting the result of the request inside ```test.md```.
-/// 
+///
 /// In case of errors, it prints the error messages and exit the program.
 pub fn submit_test(test_num: &String) {
-    let uri = read_uri_from_dotfile();
+    let uri = match read_uri_from_dotfile() {
+        Ok(uri) => uri,
+        Err(e) => {
+            print_submit_error_message(e);
+            exit(-1);
+        }
+    };
     let file = match get_question_file_name() {
         Ok(file_info) => file_info,
         Err(e) => {
@@ -51,10 +57,10 @@ pub fn submit_test(test_num: &String) {
 }
 
 /// Create the ```test.md``` file with the response of the server.
-/// 
-/// This function manages the creation of the ```test.md``` as well as 
+///
+/// This function manages the creation of the ```test.md``` as well as
 /// writing the response inside of it.
-/// 
+///
 /// In case of errors, it will return an error from the ```FileCreationError``` enum.
 fn create_test_file(test_response: SubmitTestResponse) -> Result<(), FileCreationError> {
     println!("Creating test.md");

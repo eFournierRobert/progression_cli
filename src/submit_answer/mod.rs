@@ -24,7 +24,13 @@ use std::{
 ///
 /// In case of errors, it prints the error messages and exit the program.
 pub fn submit_answer() {
-    let uri = read_uri_from_dotfile();
+    let uri = match read_uri_from_dotfile() {
+        Ok(uri) => uri,
+        Err(e) => {
+            print_submit_error_message(e);
+            exit(-1);
+        }
+    };
     let file = match get_question_file_name() {
         Ok(file_info) => file_info,
         Err(e) => {

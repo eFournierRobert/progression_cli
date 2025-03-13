@@ -10,10 +10,10 @@ use crate::{
 };
 
 /// Post the given test for a given question and receive a ```SubmitTestResponse``` for it.
-/// 
+///
 /// This function submits an answer for the given question and returns a struct ``SubmitTestResponse```
 /// with the whole response from the server.
-/// 
+///
 /// In case of error, it will return an error from the ```RequestError``` enum.
 pub fn post_test(
     uri: String,
