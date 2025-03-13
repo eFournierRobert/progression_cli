@@ -14,7 +14,7 @@ fn main() {
         .arg(
             Arg::new("only-lang")
                 .long("only-lang")
-                .help("Clone only one language question")
+                .help("Clone only one language question. Not required if question only as one language.")
                 .required(false),
         )
         .arg(

@@ -76,10 +76,7 @@ fn create_test_file(test_response: SubmitTestResponse) -> Result<(), FileCreatio
                 .attributes
                 .feedback
                 .unwrap_or("Aucun feedback".to_string()),
-            test_response
-                .data
-                .attributes
-                .temps_exécution
+            test_response.data.attributes.temps_exécution
         ) {
             Ok(_) => {
                 println!("test.md created");
