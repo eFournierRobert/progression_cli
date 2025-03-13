@@ -27,6 +27,7 @@ pub enum FileCreationError {
 }
 
 pub enum SubmitError {
+    NotInDirectory,
     QuestionFileNotFound,
     CoultNotReadDirectory,
 }
@@ -34,8 +35,17 @@ pub enum SubmitError {
 /// Reads the URI from the ```.progcli``` file.
 ///
 /// This function reads the current question URI and returns it.
-pub fn read_uri_from_dotfile() -> String {
-    fs::read_to_string(".progcli").expect(".progcli not found")
+/// Checks at the same time if you're in the directory with the question.
+///
+/// In case of error, it returns a ```SubmitError::NotInDirectory```.
+pub fn read_uri_from_dotfile() -> Result<String, SubmitError> {
+    let exist = fs::exists(".progcli").unwrap();
+
+    if exist {
+        Ok(fs::read_to_string(".progcli").expect(".progcli not found"))
+    } else {
+        Err(SubmitError::NotInDirectory)
+    }
 }
 
 /// Reads the code of the given question file.
@@ -211,6 +221,12 @@ pub fn print_submit_error_message(e: SubmitError) {
         }
         SubmitError::CoultNotReadDirectory => {
             println!("Could not read current directory");
+            return;
+        }
+        SubmitError::NotInDirectory => {
+            println!(
+                "Could not read .progcli. Make sure you are in the directory where you cloned the question."
+            );
             return;
         }
     }
