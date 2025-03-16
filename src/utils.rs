@@ -4,6 +4,8 @@ use std::{
     io::{self, Write},
 };
 
+use colored::Colorize;
+
 #[derive(Debug)]
 pub enum RequestError {
     AuthCreationFail,
@@ -136,31 +138,49 @@ pub fn get_username_password() -> Result<HashMap<String, String>, io::Error> {
 pub fn request_error_messages(e: RequestError) {
     match e {
         RequestError::AuthCreationFail => {
-            println!("Failed to create basic auth.");
+            println!("{}", "Failed to create basic auth.".red().bold());
             return;
         }
         RequestError::QuestionDeserializeFail => {
-            println!("Failed to deserialize API response.");
+            println!("{}", "Failed to deserialize API response.".red().bold());
             return;
         }
         RequestError::QuestionRequestFail => {
-            println!("Failed to make HTTP request for question.");
+            println!(
+                "{}",
+                "Failed to make HTTP request for question.".red().bold()
+            );
             return;
         }
         RequestError::SubmitRequestFail => {
-            println!("Failed to make HTTP request to submit answer or test.");
+            println!(
+                "{}",
+                "Failed to make HTTP request to submit answer or test."
+                    .red()
+                    .bold()
+            );
             return;
         }
         RequestError::SubmitSerializeFail => {
-            println!("Failed to serialize request body to submit answer or test.");
+            println!(
+                "{}",
+                "Failed to serialize request body to submit answer or test."
+                    .red()
+                    .bold()
+            );
             return;
         }
         RequestError::SubmitDeserializeFail => {
-            println!("Failed to deserialize response from submit answer or test.");
+            println!(
+                "{}",
+                "Failed to deserialize response from submit answer or test."
+                    .red()
+                    .bold()
+            );
             return;
         }
         RequestError::FailToGetLangage => {
-            println!("Couldn't get language from file type");
+            println!("{}", "Couldn't get language from file type".red().bold());
             return;
         }
     }
@@ -173,37 +193,40 @@ pub fn request_error_messages(e: RequestError) {
 pub fn file_creation_error_messages(e: FileCreationError) {
     match e {
         FileCreationError::FailedCreateDot => {
-            println!("Failed to create .progcli.");
+            println!("{}", "Failed to create .progcli.".red().bold());
             return;
         }
         FileCreationError::FailedCreateEnonce => {
-            println!("Failed to create enonce.md file.");
+            println!("{}", "Failed to create enonce.md file.".red().bold());
             return;
         }
         FileCreationError::FailedCreateQuestion => {
-            println!("Failed to create question file.");
+            println!("{}", "Failed to create question file.".red().bold());
             return;
         }
         FileCreationError::FailedCreateFolder => {
-            println!("Failed to create folder for files.");
+            println!("{}", "Failed to create folder for files.".red().bold());
             return;
         }
         FileCreationError::FailedCreateAnswer => {
-            println!("Failed to create answer.md file.");
+            println!("{}", "Failed to create answer.md file.".red().bold());
             return;
         }
         FileCreationError::FailedToWriteTest => {
-            println!("Failed to write test in enonce.md");
+            println!("{}", "Failed to write test in enonce.md".red().bold());
             return;
         }
         FileCreationError::FolderAlreadyExist => {
             println!(
+                "{}",
                 "Failed to create folder. Folder already exists and is not an empty directory."
+                    .red()
+                    .bold()
             );
             return;
         }
         FileCreationError::FailedToCreateTest => {
-            println!("Failed to create test.md");
+            println!("{}", "Failed to create test.md".red().bold());
             return;
         }
     }
@@ -216,16 +239,18 @@ pub fn file_creation_error_messages(e: FileCreationError) {
 pub fn print_submit_error_message(e: SubmitError) {
     match e {
         SubmitError::QuestionFileNotFound => {
-            println!("Could not find Question file");
+            println!("{}", "Could not find Question file".red().bold());
             return;
         }
         SubmitError::CoultNotReadDirectory => {
-            println!("Could not read current directory");
+            println!("{}", "Could not read current directory".red().bold());
             return;
         }
         SubmitError::NotInDirectory => {
             println!(
+                "{}",
                 "Could not read .progcli. Make sure you are in the directory where you cloned the question."
+                    .red().bold()
             );
             return;
         }
